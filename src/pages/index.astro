@@ -1,311 +1,480 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { playlists, TOTAL_VIDEOS } from '../data/playlists.js';
+import { HABITS, SEGMENTS, TOTAL_DAYS, TOTAL_POINTS, TARGET_POINTS } from '../data/habits.js';
 ---
 
 <Layout title="Dashboard" activePage="dashboard">
-  
-  <div id="dash-data" class="hidden" data-playlists={JSON.stringify(playlists)} data-total={TOTAL_VIDEOS}></div>
 
-  <div class="mb-8 animate-fade-in flex flex-col md:flex-row md:items-end justify-between gap-4">
-    <div>
-      <h2 class="text-gray-400 text-sm font-medium uppercase tracking-widest mb-1">Overview</h2>
-      <h1 id="dash-name" class="text-3xl font-bold text-white tracking-tight transition-all duration-500">AI Engineering Dashboard</h1>
-    </div>
-  </div>
+  <!-- Hidden data for JS -->
+  <div id="habits-data" class="hidden" data-habits={JSON.stringify(HABITS)} data-segments={JSON.stringify(SEGMENTS)} data-total-days={TOTAL_DAYS} data-total-points={TOTAL_POINTS} data-target={TARGET_POINTS}></div>
 
-  <!-- UP NEXT BANNER -->
-  <div id="up-next-banner" class="hidden mb-8 sleek-card bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border-purple-500/30 p-6 flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden group">
-    <div class="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-cyan-500/5 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-    <div class="flex items-center gap-4 z-10">
-      <div id="up-next-icon" class="w-14 h-14 rounded-2xl bg-[#111] flex items-center justify-center text-3xl border border-[#333]">🚀</div>
-      <div>
-        <div class="text-xs font-semibold text-purple-400 uppercase tracking-wider mb-1">Up Next</div>
-        <h3 id="up-next-title" class="text-xl font-bold text-white">Loading...</h3>
-        <p id="up-next-playlist" class="text-sm text-gray-400">Loading...</p>
-      </div>
-    </div>
-    <a id="up-next-link" href="#" class="sleek-btn sleek-btn-primary z-10 whitespace-nowrap px-8 py-3">
-      <svg class="w-5 h-5 mr-2 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      Continue
-    </a>
-  </div>
-
-  <!-- Hero Stats -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 stagger-children">
-    <div class="sleek-card p-5 flex flex-col justify-between">
-      <div class="flex items-center gap-2 mb-4 text-purple-400">
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-        <span class="text-xs font-semibold uppercase tracking-wider">Aura Level</span>
-      </div>
-      <div class="text-3xl font-bold font-[JetBrains_Mono] text-white"><span id="dash-level">1</span></div>
-    </div>
-    <div class="sleek-card p-5 flex flex-col justify-between">
-      <div class="flex items-center gap-2 mb-4 text-cyan-400">
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
-        <span class="text-xs font-semibold uppercase tracking-wider">Gold</span>
-      </div>
-      <div class="text-3xl font-bold font-[JetBrains_Mono] text-white"><span id="dash-gold">0</span></div>
-    </div>
-    <div class="sleek-card p-5 flex flex-col justify-between">
-      <div class="flex items-center gap-2 mb-4 text-emerald-400">
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
-        <span class="text-xs font-semibold uppercase tracking-wider">Total XP</span>
-      </div>
-      <div class="text-3xl font-bold font-[JetBrains_Mono] text-white"><span id="dash-xp">0</span></div>
-    </div>
-    <div class="sleek-card p-5 flex flex-col justify-between">
-      <div class="flex items-center gap-2 mb-4 text-orange-400">
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/></svg>
-        <span class="text-xs font-semibold uppercase tracking-wider">Streak</span>
-      </div>
-      <div class="text-3xl font-bold font-[JetBrains_Mono] text-white"><span id="dash-streak">0</span> <span class="text-xl">🔥</span></div>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+  <!-- ═══ HERO SECTION ═══ -->
+  <div class="mb-8 animate-fade-in">
     
-    <!-- LEFT COL: Dynamic To-Do List & Pace Calculator -->
-    <div class="flex flex-col gap-8">
+    <!-- Day Counter + Quote -->
+    <div class="hj-card-glow p-6 md:p-8 mb-6 relative overflow-hidden">
+      <!-- Shimmer overlay -->
+      <div class="absolute inset-0 animate-shimmer pointer-events-none"></div>
+
+      <!-- Anime Character Background -->
+      <div class="absolute bottom-0 right-[5%] md:right-[20%] w-[180px] md:w-[280px] opacity-20 md:opacity-40 pointer-events-none z-0 mix-blend-screen transition-transform duration-1000 hover:scale-105">
+        <img src={`${import.meta.env.BASE_URL}images/anime_warrior.png`} alt="Warrior" class="w-full h-auto drop-shadow-[0_0_15px_rgba(245,197,24,0.5)]" style="-webkit-mask-image: linear-gradient(to top, transparent 5%, black 50%); mask-image: linear-gradient(to top, transparent 5%, black 50%);" />
+      </div>
       
-      <!-- Pace Calculator -->
-      <div class="sleek-card p-5">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-bold text-white">Study Pace Calculator</h3>
-          <button id="btn-set-goal" class="text-xs text-purple-400 hover:text-purple-300">Set Target Date</button>
-        </div>
-        <div class="flex flex-col gap-2">
-          <div class="flex justify-between text-sm">
-            <span class="text-gray-400">Goal Date:</span>
-            <span id="target-date-display" class="text-white font-medium">None</span>
-          </div>
-          <div class="flex justify-between text-sm">
-            <span class="text-gray-400">Videos Remaining:</span>
-            <span id="videos-remaining" class="text-white font-[JetBrains_Mono]">---</span>
-          </div>
-          <div class="h-px w-full bg-[#333] my-2"></div>
-          <div class="flex justify-between text-sm items-center">
-            <span class="text-gray-400">Required Pace:</span>
-            <div class="text-right">
-              <div id="pace-videos" class="text-emerald-400 font-bold font-[JetBrains_Mono]">---</div>
-              <div id="pace-time" class="text-xs text-gray-500">~ 45m / video</div>
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="px-3 py-1 rounded-full bg-[#f5c518]/10 border border-[#f5c518]/20 text-[#f5c518] text-xs font-bold uppercase tracking-wider">
+              🏆 Summer 120 Challenge
+            </div>
+            <div id="level-badge" class="px-3 py-1 rounded-full bg-[#111] border border-[#222] text-xs font-bold">
+              Lv.1
             </div>
           </div>
+          <h1 class="text-4xl md:text-5xl font-black text-white tracking-tight mb-2">
+            DAY <span id="hero-day" class="text-[#f5c518] font-mono-num">1</span>
+            <span class="text-[#333] text-2xl md:text-3xl font-bold"> / 120</span>
+          </h1>
+          <p id="hero-quote" class="text-sm text-[#666] italic max-w-lg mt-3 leading-relaxed">
+            "Discipline is choosing between what you want now and what you want most."
+          </p>
         </div>
-      </div>
-
-      <!-- Dynamic To-Do List -->
-      <div class="sleek-card p-5 flex-1">
-        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-          <svg class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          Daily Quests
-        </h3>
-        <div id="todo-list" class="flex flex-col gap-3">
-          <!-- Populated by JS -->
+        
+        <!-- Circular Progress Ring -->
+        <div class="flex flex-col items-center gap-2">
+          <div class="relative w-28 h-28 md:w-32 md:h-32">
+            <svg viewBox="0 0 120 120" class="w-full h-full transform -rotate-90">
+              <circle cx="60" cy="60" r="52" class="score-ring-bg" />
+              <circle id="hero-ring" cx="60" cy="60" r="52" class="score-ring-fill" 
+                stroke="#f5c518"
+                stroke-dasharray="326.73"
+                stroke-dashoffset="326.73" />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span id="hero-pct" class="text-2xl md:text-3xl font-black text-white font-mono-num">0</span>
+              <span class="text-[10px] text-[#666] font-semibold uppercase tracking-wider">complete</span>
+            </div>
+          </div>
+          <div class="text-[11px] text-[#555] font-medium"><span id="hero-days-done" class="text-white font-mono-num">0</span> of 120 days</div>
         </div>
-      </div>
-
-    </div>
-
-    <!-- RIGHT COL: Learning Paths Grid -->
-    <div class="lg:col-span-2">
-      <h2 class="text-xl font-semibold text-white mb-4">Learning Paths</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 stagger-children">
-        {playlists.map(p => (
-          <a href={`/playlist/${p.id}`} class="sleek-card p-5 hover:bg-[#111] group">
-            <div class="flex justify-between items-start mb-6">
-              <div>
-                <h3 class={`text-lg font-bold text-white group-hover:${p.colorClass} transition-colors`}>{p.name}</h3>
-                <p class="text-gray-400 text-sm mt-1">{p.shortName}</p>
-              </div>
-              <div class={`w-10 h-10 rounded-lg ${p.bgClass} flex items-center justify-center ${p.colorClass} border ${p.borderClass}`}>
-                <span class="text-lg">{p.emoji}</span>
-              </div>
-            </div>
-            <div class="w-full bg-[#222] h-1.5 rounded-full overflow-hidden">
-              <div id={`prog-${p.id}`} class="h-full transition-all duration-500" style={`width: 0%; background-color: ${p.color}; box-shadow: 0 0 10px ${p.color}80;`}></div>
-            </div>
-            <div class="mt-2 text-xs text-gray-500 text-right"><span id={`prog-text-${p.id}`}>0</span> / {p.totalVideos}</div>
-          </a>
-        ))}
       </div>
     </div>
+  </div>
 
+  <!-- ═══ STATS + RADAR CHART ROW ═══ -->
+  <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+    
+    <!-- Stats Cards (Left - 2 cols) -->
+    <div class="lg:col-span-2 grid grid-cols-2 gap-4 stagger-children">
+      <!-- Today's Score -->
+      <div class="hj-card p-5 col-span-2">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold text-[#555] uppercase tracking-wider">Today's Score</span>
+          <span id="score-badge" class="score-badge score-gray">---</span>
+        </div>
+        <div class="flex items-baseline gap-1">
+          <span id="today-score" class="text-5xl font-black text-white font-mono-num">0</span>
+          <span class="text-xl text-[#333] font-bold font-mono-num">/100</span>
+        </div>
+        <!-- Mini progress bar -->
+        <div class="w-full bg-[#1e1e1e] h-2 rounded-full mt-4 overflow-hidden">
+          <div id="score-bar" class="h-full rounded-full transition-all duration-700 ease-out" style="width: 0%; background: linear-gradient(90deg, #f5c518, #ff6b35);"></div>
+        </div>
+      </div>
+
+      <!-- Streak -->
+      <div class="hj-card p-5">
+        <span class="text-xs font-bold text-[#555] uppercase tracking-wider">Streak</span>
+        <div class="flex items-baseline gap-1 mt-2">
+          <span id="stat-streak" class="text-3xl font-black text-white font-mono-num animate-streak-fire">0</span>
+          <span class="text-lg">🔥</span>
+        </div>
+        <div class="text-[11px] text-[#444] mt-1">Best: <span id="stat-best-streak" class="text-white font-mono-num">0</span></div>
+      </div>
+
+      <!-- Average -->
+      <div class="hj-card p-5">
+        <span class="text-xs font-bold text-[#555] uppercase tracking-wider">Avg Score</span>
+        <div class="flex items-baseline gap-1 mt-2">
+          <span id="stat-avg" class="text-3xl font-black text-white font-mono-num">0</span>
+          <span class="text-sm text-[#444] font-bold">/100</span>
+        </div>
+        <div class="text-[11px] text-[#444] mt-1">XP: <span id="stat-total-xp" class="text-[#f5c518] font-mono-num">0</span></div>
+      </div>
+    </div>
+
+    <!-- Radar Chart (Right - 3 cols) -->
+    <div class="lg:col-span-3 hj-card p-6 flex flex-col items-center justify-center">
+      <h3 class="text-sm font-bold text-[#555] uppercase tracking-wider mb-4 self-start">Warrior Stats</h3>
+      <div class="radar-container animate-radar-glow">
+        <svg id="radar-chart" viewBox="0 0 300 300"></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TODAY'S HABITS CHECKLIST ═══ -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-xl font-bold text-white flex items-center gap-2">
+        <span>Today's Mission</span>
+        <span id="habits-done-count" class="text-sm font-mono-num text-[#555]">(0/10)</span>
+      </h2>
+      <div id="day-nav" class="flex items-center gap-2">
+        <button id="prev-day" class="hj-btn-ghost px-2 py-1 text-xs">← Prev</button>
+        <span id="viewing-day" class="text-xs font-bold text-[#f5c518] font-mono-num">Day 1</span>
+        <button id="next-day" class="hj-btn-ghost px-2 py-1 text-xs">Next →</button>
+      </div>
+    </div>
+
+    <!-- Habit Groups by Segment -->
+    <div id="habits-container" class="flex flex-col gap-6 stagger-children">
+      <!-- Built by JS -->
+    </div>
+  </div>
+
+  <!-- ═══ WEEKLY CHART ═══ -->
+  <div class="hj-card p-6 mb-8 animate-fade-in">
+    <h3 class="text-sm font-bold text-[#555] uppercase tracking-wider mb-4">Last 7 Days</h3>
+    <div class="flex items-end justify-between gap-2 h-32" id="weekly-chart">
+      <!-- Built by JS -->
+    </div>
+    <div class="flex justify-between mt-2 text-[10px] text-[#444] font-medium" id="weekly-labels">
+      <!-- Built by JS -->
+    </div>
   </div>
 
   <script>
-    function updateDashboard() {
-      try {
-        const dataEl = document.getElementById('dash-data');
-        const ALL_PLAYLISTS = JSON.parse(dataEl.dataset.playlists);
-        const TOTAL_VIDEOS = parseInt(dataEl.dataset.total, 10);
+    import {
+      HABITS, SEGMENTS, TOTAL_DAYS, TOTAL_POINTS, TARGET_POINTS,
+      getCurrentDay, calculateScore, loadState, saveState,
+      getDayData, setDayData, getTotalXP, getLevel, getAverageScore,
+      getCompletedDays, getSegmentScore, getSegmentMaxScore,
+      getDailyQuote, recalcStreak
+    } from '../data/habits.js';
 
-        const saved = localStorage.getItem('ai-engineering-tracker');
-        const state = saved ? JSON.parse(saved) : {};
-        const completed = state.completedVideos || {};
+    let state = loadState();
+    let viewingDay = getCurrentDay();
+    const today = getCurrentDay();
 
-        document.getElementById('dash-xp').textContent = state.xp || 0;
-        document.getElementById('dash-gold').textContent = state.gold || 0;
-        document.getElementById('dash-streak').textContent = state.streak?.current || 0;
-        
-        // Simple level math
-        const xp = state.xp || 0;
-        let level = 1;
-        const thresholds = [0,100,250,500,800,1200,1700,2300,3000];
-        for (let i = 1; i < thresholds.length; i++) {
-          if (xp >= thresholds[i]) level = i + 1;
+    // ─── Render Everything ──────────────────────────
+    function render() {
+      state = loadState();
+      renderHero();
+      renderStats();
+      renderRadar();
+      renderHabits();
+      renderWeekly();
+    }
+
+    // ─── HERO ───────────────────────────────────────
+    function renderHero() {
+      document.getElementById('hero-day').textContent = today;
+      
+      // Quote
+      const q = getDailyQuote();
+      document.getElementById('hero-quote').innerHTML = `"${q.text}"${q.author ? ` <span class="text-[#444]">— ${q.author}</span>` : ''}`;
+
+      // Progress ring
+      const completedDays = getCompletedDays(state);
+      const pct = Math.round((completedDays / TOTAL_DAYS) * 100);
+      document.getElementById('hero-pct').textContent = pct + '%';
+      document.getElementById('hero-days-done').textContent = completedDays;
+
+      const circumference = 2 * Math.PI * 52; // ~326.73
+      const offset = circumference - (pct / 100) * circumference;
+      const ring = document.getElementById('hero-ring');
+      ring.style.strokeDashoffset = offset;
+
+      // Color the ring based on progress
+      if (pct >= 70) ring.setAttribute('stroke', '#39ff14');
+      else if (pct >= 40) ring.setAttribute('stroke', '#f5c518');
+      else ring.setAttribute('stroke', '#ff6b35');
+
+      // Level badge
+      const xp = getTotalXP(state);
+      const level = getLevel(xp);
+      const badge = document.getElementById('level-badge');
+      badge.textContent = `Lv.${level.level} ${level.title}`;
+      badge.style.borderColor = level.color + '40';
+      badge.style.color = level.color;
+    }
+
+    // ─── STATS ──────────────────────────────────────
+    function renderStats() {
+      const dayData = getDayData(state, viewingDay);
+      const score = dayData.score;
+
+      // Today's score
+      document.getElementById('today-score').textContent = score;
+      document.getElementById('score-bar').style.width = score + '%';
+
+      // Score badge
+      const badge = document.getElementById('score-badge');
+      badge.className = 'score-badge';
+      if (score >= TARGET_POINTS) {
+        badge.classList.add('score-green');
+        badge.textContent = '🟢 On Track';
+      } else if (score >= 60) {
+        badge.classList.add('score-yellow');
+        badge.textContent = '🟡 Almost';
+      } else if (score > 0) {
+        badge.classList.add('score-red');
+        badge.textContent = '🔴 Push Harder';
+      } else {
+        badge.classList.add('score-gray');
+        badge.textContent = 'Not Started';
+      }
+
+      // Score bar color
+      const bar = document.getElementById('score-bar');
+      if (score >= TARGET_POINTS) bar.style.background = 'linear-gradient(90deg, #39ff14, #22d3ee)';
+      else if (score >= 60) bar.style.background = 'linear-gradient(90deg, #f5c518, #ff6b35)';
+      else bar.style.background = 'linear-gradient(90deg, #ef4444, #ff6b35)';
+
+      // Other stats
+      document.getElementById('stat-streak').textContent = state.streak?.current || 0;
+      document.getElementById('stat-best-streak').textContent = state.streak?.best || 0;
+      document.getElementById('stat-avg').textContent = getAverageScore(state);
+      document.getElementById('stat-total-xp').textContent = getTotalXP(state);
+
+      // Viewing day label
+      document.getElementById('viewing-day').textContent = `Day ${viewingDay}`;
+
+      // Habits done count
+      const doneCount = dayData.habits.filter(Boolean).length;
+      document.getElementById('habits-done-count').textContent = `(${doneCount}/10)`;
+    }
+
+    // ─── RADAR CHART ────────────────────────────────
+    function renderRadar() {
+      const svg = document.getElementById('radar-chart');
+      const cx = 150, cy = 150, maxR = 110;
+      const dayData = getDayData(state, viewingDay);
+
+      // 5 axes: Bear, Compounding, Energy, Consistency, Discipline
+      const bearMax = getSegmentMaxScore('bear');
+      const compMax = getSegmentMaxScore('compounding');
+      const energyMax = getSegmentMaxScore('energy');
+
+      const bearVal = HABITS.reduce((s, h, i) => h.segment === 'bear' && dayData.habits[i] ? s + h.points : s, 0) / bearMax;
+      const compVal = HABITS.reduce((s, h, i) => h.segment === 'compounding' && dayData.habits[i] ? s + h.points : s, 0) / compMax;
+      const energyVal = HABITS.reduce((s, h, i) => h.segment === 'energy' && dayData.habits[i] ? s + h.points : s, 0) / energyMax;
+      
+      const completedDays = getCompletedDays(state);
+      const trackedDays = Object.keys(state.days).length;
+      const consistencyVal = trackedDays > 0 ? completedDays / Math.max(trackedDays, 1) : 0;
+      const disciplineVal = getAverageScore(state) / 100;
+
+      const axes = [
+        { label: '🐻 Focus', value: bearVal, color: '#ff6b35' },
+        { label: '📈 Growth', value: compVal, color: '#00d4ff' },
+        { label: '⚡ Energy', value: energyVal, color: '#39ff14' },
+        { label: '🎯 Consistency', value: consistencyVal, color: '#a78bfa' },
+        { label: '💪 Discipline', value: disciplineVal, color: '#f5c518' },
+      ];
+
+      const n = axes.length;
+      const angleStep = (2 * Math.PI) / n;
+
+      function polarToXY(angle, radius) {
+        return {
+          x: cx + radius * Math.cos(angle - Math.PI / 2),
+          y: cy + radius * Math.sin(angle - Math.PI / 2),
+        };
+      }
+
+      let svgContent = '';
+
+      // Background grid (concentric pentagons)
+      for (let ring = 1; ring <= 4; ring++) {
+        const r = (ring / 4) * maxR;
+        let points = '';
+        for (let i = 0; i < n; i++) {
+          const { x, y } = polarToXY(i * angleStep, r);
+          points += `${x},${y} `;
         }
-        document.getElementById('dash-level').textContent = level;
+        svgContent += `<polygon points="${points.trim()}" class="radar-grid-line" />`;
+      }
 
-        // Apply Cosmetics
-        const dashName = document.getElementById('dash-name');
-        if (state.cosmetics && state.cosmetics.includes('title-sigma-dev')) {
-          dashName.className = 'text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-500 to-amber-500 animate-pulse drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]';
-          dashName.textContent = 'Max Aura Sigma Dev 👑';
-        } else {
-          dashName.className = 'text-3xl font-bold text-white tracking-tight transition-all duration-500';
-          dashName.textContent = 'AI Engineering Dashboard';
-        }
+      // Axis lines
+      for (let i = 0; i < n; i++) {
+        const { x, y } = polarToXY(i * angleStep, maxR);
+        svgContent += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" class="radar-axis" />`;
+      }
 
-        // Progress calculation
-        let overallCompletedCount = 0;
-        const counts = {};
-        for (const p of ALL_PLAYLISTS) counts[p.id] = 0;
+      // Data polygon
+      let dataPoints = '';
+      const dots = [];
+      for (let i = 0; i < n; i++) {
+        const val = Math.max(axes[i].value, 0.05); // minimum visible
+        const { x, y } = polarToXY(i * angleStep, val * maxR);
+        dataPoints += `${x},${y} `;
+        dots.push({ x, y, color: axes[i].color });
+      }
+      svgContent += `<polygon points="${dataPoints.trim()}" class="radar-fill" />`;
 
-        for (const key of Object.keys(completed)) {
-          // Find which playlist this video belongs to
-          // In playlists.js, video IDs are exactly as fetched. 
-          // We need to scan playlists to find where this ID lives to increment the correct count.
-          for (const p of ALL_PLAYLISTS) {
-            if (p.videos.find(v => v.id === key)) {
-              counts[p.id]++;
-              overallCompletedCount++;
-              break;
-            }
-          }
-        }
+      // Data dots
+      for (const d of dots) {
+        svgContent += `<circle cx="${d.x}" cy="${d.y}" r="5" class="radar-dot" style="fill:${d.color}" />`;
+      }
 
-        // Update progress bars
-        for (const p of ALL_PLAYLISTS) {
-          const el = document.getElementById(`prog-${p.id}`);
-          const textEl = document.getElementById(`prog-text-${p.id}`);
-          if (el && textEl) {
-            const pct = Math.min((counts[p.id] / p.totalVideos) * 100, 100);
-            el.style.width = `${pct}%`;
-            textEl.textContent = counts[p.id];
-          }
-        }
+      // Labels
+      for (let i = 0; i < n; i++) {
+        const { x, y } = polarToXY(i * angleStep, maxR + 22);
+        const val = Math.round(axes[i].value * 100);
+        svgContent += `<text x="${x}" y="${y}" class="radar-label" dominant-baseline="middle">${axes[i].label}</text>`;
+        // Value underneath
+        svgContent += `<text x="${x}" y="${y + 14}" class="radar-label" style="fill:${axes[i].color}; font-size:10px; font-family:'JetBrains Mono',monospace;" dominant-baseline="middle">${val}%</text>`;
+      }
 
-        // --- UP NEXT LOGIC ---
-        // Find the first unwatched video in the user's active playlist, or just the first overall
-        let upNextVideo = null;
-        let upNextPlaylist = null;
-        
-        for (const p of ALL_PLAYLISTS) {
-          // If they've started this playlist but haven't finished it
-          if (counts[p.id] > 0 && counts[p.id] < p.totalVideos) {
-            // Find the exact video they are on
-            for (let i = 0; i < p.videos.length; i++) {
-              if (!completed[p.videos[i].id]) {
-                upNextVideo = p.videos[i];
-                upNextPlaylist = p;
-                break;
-              }
-            }
-          }
-          if (upNextVideo) break;
-        }
-        
-        // Fallback: If no partially completed playlist, find the very first playlist they haven't finished
-        if (!upNextVideo) {
-          for (const p of ALL_PLAYLISTS) {
-            if (counts[p.id] === 0) {
-              upNextVideo = p.videos[0];
-              upNextPlaylist = p;
-              break;
-            }
-          }
-        }
+      svg.innerHTML = svgContent;
+    }
 
-        const banner = document.getElementById('up-next-banner');
-        if (upNextVideo && upNextPlaylist) {
-          banner.classList.remove('hidden');
-          banner.classList.add('flex');
-          document.getElementById('up-next-icon').textContent = upNextPlaylist.emoji;
-          document.getElementById('up-next-title').textContent = `${upNextPlaylist.shortName} - ${upNextVideo.title}`;
-          document.getElementById('up-next-playlist').textContent = upNextPlaylist.name;
-          document.getElementById('up-next-link').href = `/playlist/${upNextPlaylist.id}`;
-        } else {
-          banner.classList.add('hidden');
-          banner.classList.remove('flex');
-        }
+    // ─── HABITS CHECKLIST ───────────────────────────
+    function renderHabits() {
+      const container = document.getElementById('habits-container');
+      const dayData = getDayData(state, viewingDay);
+      
+      let html = '';
+      
+      for (const seg of SEGMENTS) {
+        const segHabits = HABITS.filter(h => h.segment === seg.id);
+        const segDone = segHabits.filter((h) => dayData.habits[h.id]).length;
+        const segTotal = segHabits.length;
+        const segScore = segHabits.reduce((s, h) => dayData.habits[h.id] ? s + h.points : s, 0);
+        const segMax = segHabits.reduce((s, h) => s + h.points, 0);
 
-        // --- DYNAMIC TO-DO LIST ---
-        const todoContainer = document.getElementById('todo-list');
-        todoContainer.innerHTML = '';
-        
-        const tasks = [];
-        if (upNextVideo) {
-          tasks.push({ text: `Watch ${upNextPlaylist.shortName} - ${upNextVideo.title}`, xp: 25 });
-        } else {
-          tasks.push({ text: `Course Complete! Touch Grass.`, xp: 0 });
-        }
-        tasks.push({ text: 'Complete 2 Focus Pomodoros', xp: 20 });
-        if (state.gold > 100) {
-          tasks.push({ text: 'Spin the W or L Gacha Box', xp: 5 });
-        } else {
-          tasks.push({ text: 'Review Notes & Code', xp: 10 });
-        }
+        html += `
+          <div class="hj-card p-4 md:p-5">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">${seg.emoji}</span>
+                <span class="text-sm font-bold" style="color: ${seg.color}">${seg.name}</span>
+                <span class="text-[10px] text-[#444] font-medium hidden md:inline">— ${seg.tagline}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-mono-num" style="color: ${seg.color}">${segScore}/${segMax}</span>
+                <span class="text-[10px] text-[#444]">(${segDone}/${segTotal})</span>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+        `;
 
-        tasks.forEach(t => {
-          todoContainer.innerHTML += `
-            <div class="flex items-center gap-3 p-3 rounded-xl bg-[#111] border border-[#222]">
-              <div class="w-5 h-5 rounded border border-[#444] flex-shrink-0"></div>
-              <div class="flex-1 text-sm text-gray-300">${t.text}</div>
-              <div class="text-xs font-bold text-purple-400">+${t.xp} XP</div>
+        for (const habit of segHabits) {
+          const checked = dayData.habits[habit.id];
+          html += `
+            <div class="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${checked ? 'bg-[#111]' : 'bg-transparent hover:bg-[#0d0d0d]'} group cursor-pointer" data-habit-id="${habit.id}" role="button" tabindex="0">
+              <div class="habit-check ${checked ? 'checked' : ''}" data-hid="${habit.id}">
+                ${checked ? '<svg class="w-4 h-4 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-semibold ${checked ? 'text-[#888] line-through' : 'text-white'} transition-colors">${habit.emoji} ${habit.name}</span>
+                </div>
+                <span class="text-[11px] text-[#444] ${checked ? 'line-through' : ''}">${habit.subtitle} — ${habit.descHi}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-bold font-mono-num ${checked ? 'text-emerald-400' : 'text-[#333]'} transition-colors">+${habit.points}</span>
+              </div>
             </div>
           `;
-        });
-
-        // --- PACE CALCULATOR ---
-        let targetDateStr = localStorage.getItem('ai-tracker-target-date');
-        let remainingVideos = TOTAL_VIDEOS - overallCompletedCount;
-        document.getElementById('videos-remaining').textContent = remainingVideos;
-        
-        if (targetDateStr) {
-          const targetDate = new Date(targetDateStr);
-          document.getElementById('target-date-display').textContent = targetDate.toLocaleDateString();
-          
-          const now = new Date();
-          const daysLeft = Math.max(1, Math.ceil((targetDate - now) / (1000 * 60 * 60 * 24)));
-          
-          const videosPerDay = (remainingVideos / daysLeft).toFixed(1);
-          const minsPerDay = Math.ceil(videosPerDay * 45); // Assuming 45 mins per video
-          
-          const hrs = Math.floor(minsPerDay / 60);
-          const mins = minsPerDay % 60;
-          
-          document.getElementById('pace-videos').textContent = `${videosPerDay} vids/day`;
-          document.getElementById('pace-time').textContent = `~ ${hrs > 0 ? hrs + 'h ' : ''}${mins}m / day`;
-        } else {
-          document.getElementById('pace-videos').textContent = 'Set Goal ->';
-          document.getElementById('pace-time').textContent = '';
         }
 
-      } catch(e) { console.error('Dashboard error:', e); }
-    }
-    
-    document.getElementById('btn-set-goal')?.addEventListener('click', () => {
-      const date = prompt('Enter your target completion date (YYYY-MM-DD):');
-      if (date && !isNaN(new Date(date).getTime())) {
-        localStorage.setItem('ai-tracker-target-date', date);
-        updateDashboard();
-      } else if (date) {
-        alert('Invalid date format.');
+        html += `
+            </div>
+          </div>
+        `;
       }
+      
+      container.innerHTML = html;
+
+      // Attach click handlers
+      container.querySelectorAll('[data-habit-id]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          const hid = parseInt(el.dataset.habitId);
+          toggleHabit(hid);
+        });
+      });
+    }
+
+    // ─── Toggle Habit ───────────────────────────────
+    function toggleHabit(habitId) {
+      const dayData = getDayData(state, viewingDay);
+      dayData.habits[habitId] = !dayData.habits[habitId];
+      setDayData(state, viewingDay, dayData);
+      saveState(state);
+
+      // Check for perfect score
+      if (dayData.score === 100) {
+        window.launchConfetti?.();
+        window.showToast?.('💯 PERFECT SCORE! You are UNSTOPPABLE! 🔥', 'success');
+      } else if (dayData.score >= TARGET_POINTS && !dayData.habits[habitId]) {
+        // Dropped below target (unchecked something)
+      } else if (dayData.score >= TARGET_POINTS) {
+        window.showToast?.('🟢 Target reached! Keep it up! 🔥', 'success');
+      }
+
+      render();
+    }
+
+    // ─── WEEKLY CHART ───────────────────────────────
+    function renderWeekly() {
+      const chart = document.getElementById('weekly-chart');
+      const labels = document.getElementById('weekly-labels');
+      
+      let html = '';
+      let labelsHtml = '';
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      
+      for (let i = 6; i >= 0; i--) {
+        const d = today - i;
+        if (d < 1) {
+          html += `<div class="flex-1 flex flex-col items-center justify-end"><div class="w-full rounded-lg bg-[#111] h-2"></div></div>`;
+          labelsHtml += `<span class="flex-1 text-center">—</span>`;
+          continue;
+        }
+        
+        const dayData = getDayData(state, d);
+        const score = dayData.score;
+        const heightPct = Math.max(score, 3);
+        
+        let barColor = '#1e1e1e';
+        if (score >= TARGET_POINTS) barColor = 'linear-gradient(180deg, #39ff14, #22d3ee)';
+        else if (score >= 60) barColor = 'linear-gradient(180deg, #f5c518, #ff6b35)';
+        else if (score > 0) barColor = 'linear-gradient(180deg, #ef4444, #ff6b35)';
+
+        const isToday = d === today;
+        
+        html += `
+          <div class="flex-1 flex flex-col items-center justify-end gap-1">
+            <span class="text-[10px] font-mono-num ${score >= TARGET_POINTS ? 'text-emerald-400' : score > 0 ? 'text-[#666]' : 'text-[#333]'}">${score > 0 ? score : ''}</span>
+            <div class="w-full rounded-lg transition-all duration-500 ${isToday ? 'ring-1 ring-[#f5c518]/30' : ''}" 
+              style="height: ${heightPct}%; background: ${barColor}; min-height: 4px;"></div>
+          </div>
+        `;
+
+        // Calculate date for label
+        const startDate = new Date('2026-06-01');
+        startDate.setDate(startDate.getDate() + d - 1);
+        const dayName = dayNames[startDate.getDay()];
+        labelsHtml += `<span class="flex-1 text-center ${isToday ? 'text-[#f5c518] font-bold' : ''}">${dayName}</span>`;
+      }
+
+      chart.innerHTML = html;
+      labels.innerHTML = labelsHtml;
+    }
+
+    // ─── DAY NAVIGATION ─────────────────────────────
+    document.getElementById('prev-day')?.addEventListener('click', () => {
+      if (viewingDay > 1) { viewingDay--; render(); }
+    });
+    document.getElementById('next-day')?.addEventListener('click', () => {
+      if (viewingDay < today) { viewingDay++; render(); }
     });
 
-    updateDashboard();
-    window.addEventListener('tracker-updated', updateDashboard);
+    // ─── Initialize ─────────────────────────────────
+    render();
+    window.addEventListener('hj-state-updated', render);
   </script>
+
 </Layout>

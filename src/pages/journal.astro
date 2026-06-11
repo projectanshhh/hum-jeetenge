@@ -1,0 +1,558 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Journal" activePage="journal">
+
+  <!-- ═══ Header ═══════════════════════════════════════ -->
+  <div class="mb-8 animate-fade-in">
+    <div class="flex items-center gap-3 mb-2">
+      <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#f5c518]/20 to-[#ff6b35]/10 border border-[#f5c518]/20 flex items-center justify-center text-xl shadow-[0_0_24px_rgba(245,197,24,0.15)]">
+        🌙
+      </div>
+      <div>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Mental Night Tracker</h1>
+        <p class="text-sm text-[#888] mt-0.5">सोने से पहले 5 मिनट — आज का दिन कैसा गया?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Main Grid ════════════════════════════════════ -->
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
+
+    <!-- ─── Left Column: Editor + Past Entries ──────── -->
+    <div class="flex flex-col gap-8 stagger-children">
+
+      <!-- Today's Entry Section -->
+      <div class="hj-card-glow p-6 md:p-8 relative">
+        <!-- Subtle ambient glow behind textarea -->
+        <div class="absolute -top-20 left-1/2 -translate-x-1/2 w-[300px] h-[200px] bg-[#f5c518]/[0.03] rounded-full blur-[80px] pointer-events-none"></div>
+
+        <!-- Day Badge + Date -->
+        <div class="flex items-center justify-between mb-6 relative">
+          <div class="flex items-center gap-3">
+            <span id="journal-day-badge" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#f5c518]/10 border border-[#f5c518]/20 text-[#f5c518] text-xs font-bold font-mono-num">
+              Day 1
+            </span>
+            <span id="journal-date" class="text-sm text-[#555]"></span>
+          </div>
+          <div id="journal-saved-indicator" class="hidden flex items-center gap-1.5 text-xs text-emerald-400/80">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            Saved
+          </div>
+        </div>
+
+        <!-- Textarea -->
+        <div class="relative">
+          <textarea
+            id="journal-textarea"
+            class="journal-textarea"
+            rows="10"
+            placeholder="आज का दिन कैसा गया? अपने thoughts, wins, और learnings लिखो..."
+            maxlength="5000"
+          ></textarea>
+          <!-- Character count -->
+          <div class="flex items-center justify-between mt-3">
+            <div class="text-[11px] text-[#444]">
+              <span id="journal-char-count" class="font-mono-num">0</span>
+              <span> / 5000 characters</span>
+            </div>
+            <div id="journal-word-count" class="text-[11px] text-[#444] font-mono-num">0 words</div>
+          </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="flex items-center justify-between mt-5">
+          <div id="journal-autosave-hint" class="text-[11px] text-[#333] italic">Press Ctrl+S to quick save</div>
+          <button id="journal-save-btn" class="hj-btn-primary px-8">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            Save Entry
+          </button>
+        </div>
+      </div>
+
+      <!-- Writing Prompts -->
+      <div class="hj-card p-5">
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-[#f5c518]">💡</span>
+          <h3 class="text-sm font-semibold text-[#888] uppercase tracking-wider">Writing Prompts</h3>
+          <button id="prompts-refresh" class="ml-auto text-[11px] text-[#444] hover:text-[#888] transition-colors" title="Shuffle prompts">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </button>
+        </div>
+        <div id="prompts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Past Entries Feed -->
+      <div>
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-[#f5c518]/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Past Entries
+          </h3>
+          <span id="entries-count-label" class="text-xs text-[#444]"></span>
+        </div>
+        <div id="past-entries-feed" class="flex flex-col gap-4">
+          <!-- Populated by JS -->
+        </div>
+        <!-- Empty state -->
+        <div id="past-entries-empty" class="hidden hj-card p-10 text-center">
+          <div class="text-4xl mb-4 opacity-40">📝</div>
+          <h4 class="text-lg font-semibold text-[#555] mb-2">No journal entries yet</h4>
+          <p class="text-sm text-[#444] max-w-xs mx-auto">Start writing your first entry above. Just 5 minutes of reflection each night compounds into incredible self-awareness.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Right Column: Stats Sidebar ─────────────── -->
+    <div class="flex flex-col gap-4 stagger-children">
+
+      <!-- Journal Stats Card -->
+      <div class="hj-card p-5 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-[#f5c518]/[0.02] rounded-full blur-[40px] pointer-events-none"></div>
+        <h3 class="text-sm font-semibold text-[#888] uppercase tracking-wider mb-5 flex items-center gap-2">
+          <span class="text-[#f5c518]">📊</span>
+          Journal Stats
+        </h3>
+
+        <div class="flex flex-col gap-4">
+          <!-- Total Entries -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-[#f5c518]/10 flex items-center justify-center text-sm">📝</div>
+              <span class="text-sm text-[#888]">Total Entries</span>
+            </div>
+            <span id="stat-total-entries" class="text-lg font-bold text-white font-mono-num">0</span>
+          </div>
+
+          <div class="h-px bg-[#1e1e1e]"></div>
+
+          <!-- Journal Streak -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-sm">🔥</div>
+              <span class="text-sm text-[#888]">Journal Streak</span>
+            </div>
+            <span id="stat-journal-streak" class="text-lg font-bold text-emerald-400 font-mono-num">0</span>
+          </div>
+
+          <div class="h-px bg-[#1e1e1e]"></div>
+
+          <!-- Longest Entry -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-[#00d4ff]/10 flex items-center justify-center text-sm">📏</div>
+              <span class="text-sm text-[#888]">Longest Entry</span>
+            </div>
+            <div class="text-right">
+              <span id="stat-longest-entry" class="text-lg font-bold text-[#00d4ff] font-mono-num">0</span>
+              <span class="text-[11px] text-[#555] ml-0.5">words</span>
+            </div>
+          </div>
+
+          <div class="h-px bg-[#1e1e1e]"></div>
+
+          <!-- Average Length -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-[#a78bfa]/10 flex items-center justify-center text-sm">📐</div>
+              <span class="text-sm text-[#888]">Avg. Length</span>
+            </div>
+            <div class="text-right">
+              <span id="stat-avg-length" class="text-lg font-bold text-[#a78bfa] font-mono-num">0</span>
+              <span class="text-[11px] text-[#555] ml-0.5">words</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Completion Ring Card -->
+      <div class="hj-card p-5 flex flex-col items-center">
+        <h3 class="text-sm font-semibold text-[#888] uppercase tracking-wider mb-4 self-start flex items-center gap-2">
+          <span class="text-[#f5c518]">🎯</span>
+          Journal Completion
+        </h3>
+        <div class="relative w-32 h-32 mb-3">
+          <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+            <circle cx="60" cy="60" r="52" class="score-ring-bg"/>
+            <circle id="completion-ring" cx="60" cy="60" r="52" class="score-ring-fill" stroke="#f5c518" stroke-dasharray="326.73" stroke-dashoffset="326.73"/>
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span id="completion-pct" class="text-2xl font-extrabold text-white font-mono-num">0%</span>
+            <span class="text-[10px] text-[#555] uppercase tracking-wider">of 120 days</span>
+          </div>
+        </div>
+        <p id="completion-label" class="text-xs text-[#555] text-center">Start journaling to build your streak!</p>
+      </div>
+
+      <!-- Habit #6 Info Card -->
+      <div class="hj-card p-5 border-[#00d4ff]/10">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-9 h-9 rounded-xl bg-[#00d4ff]/10 flex items-center justify-center text-lg border border-[#00d4ff]/20">🌙</div>
+          <div>
+            <div class="text-sm font-bold text-white">Mental Night Tracker</div>
+            <div class="text-[11px] text-[#00d4ff]/70 font-medium">Compounding · 5 pts</div>
+          </div>
+        </div>
+        <p class="text-xs text-[#555] leading-relaxed">सोने से पहले सिर्फ 5 मिनट डायरी में लिखना कि आज का दिन कैसा गया। Writing here auto-completes this habit.</p>
+        <div class="mt-3 flex items-center gap-2">
+          <div id="habit6-status" class="w-5 h-5 rounded border-2 border-[#333] flex items-center justify-center flex-shrink-0 transition-all duration-300">
+          </div>
+          <span id="habit6-label" class="text-xs text-[#555]">Not yet completed today</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  import { HABITS, TOTAL_DAYS, CHALLENGE_START, getCurrentDay, calculateScore, loadState, saveState, getDayData, setDayData } from '../data/habits.js';
+
+  // ─── All Writing Prompts Pool ──────────────────────
+  const ALL_PROMPTS = [
+    { text: 'आज का सबसे अच्छा moment कौन सा था?', emoji: '✨' },
+    { text: 'What challenge did you face today?', emoji: '⚔️' },
+    { text: 'कल क्या better करोगे?', emoji: '🎯' },
+    { text: 'What are you grateful for today?', emoji: '🙏' },
+    { text: 'आज तुमने कौन सी अच्छी habit follow की?', emoji: '💪' },
+    { text: 'Did you step outside your comfort zone?', emoji: '🚀' },
+    { text: 'आज किसने तुम्हें inspire किया?', emoji: '🌟' },
+    { text: 'What would you tell your morning self?', emoji: '💬' },
+    { text: 'क्या आज तुम अपने goal के करीब पहुँचे?', emoji: '📈' },
+    { text: 'One thing you learned today?', emoji: '🧠' },
+    { text: 'आज का energy level कैसा था?', emoji: '⚡' },
+    { text: 'What made you smile today?', emoji: '😊' },
+  ];
+
+  // ─── DOM References ────────────────────────────────
+  const textarea = document.getElementById('journal-textarea');
+  const charCount = document.getElementById('journal-char-count');
+  const wordCount = document.getElementById('journal-word-count');
+  const saveBtn = document.getElementById('journal-save-btn');
+  const dayBadge = document.getElementById('journal-day-badge');
+  const dateEl = document.getElementById('journal-date');
+  const savedIndicator = document.getElementById('journal-saved-indicator');
+  const promptsContainer = document.getElementById('prompts-container');
+  const pastFeed = document.getElementById('past-entries-feed');
+  const emptyState = document.getElementById('past-entries-empty');
+  const entriesCountLabel = document.getElementById('entries-count-label');
+
+  // Stats
+  const statTotal = document.getElementById('stat-total-entries');
+  const statStreak = document.getElementById('stat-journal-streak');
+  const statLongest = document.getElementById('stat-longest-entry');
+  const statAvg = document.getElementById('stat-avg-length');
+  const completionRing = document.getElementById('completion-ring');
+  const completionPct = document.getElementById('completion-pct');
+  const completionLabel = document.getElementById('completion-label');
+  const habit6Status = document.getElementById('habit6-status');
+  const habit6Label = document.getElementById('habit6-label');
+
+  const currentDay = getCurrentDay();
+
+  // ─── Format Date ───────────────────────────────────
+  function formatDate(dayNum) {
+    const start = new Date(CHALLENGE_START);
+    start.setDate(start.getDate() + dayNum - 1);
+    return start.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  // ─── Word Count Helper ─────────────────────────────
+  function countWords(text) {
+    if (!text || !text.trim()) return 0;
+    return text.trim().split(/\s+/).length;
+  }
+
+  // ─── Init Header ───────────────────────────────────
+  dayBadge.textContent = `Day ${currentDay}`;
+  dateEl.textContent = formatDate(currentDay);
+
+  // ─── Load Today's Entry ────────────────────────────
+  function loadTodayEntry() {
+    const state = loadState();
+    const dayData = getDayData(state, currentDay);
+    if (dayData.journal) {
+      textarea.value = dayData.journal;
+      updateCounts();
+    }
+    updateHabit6Status(dayData);
+  }
+
+  // ─── Update Char / Word Count ──────────────────────
+  function updateCounts() {
+    const text = textarea.value;
+    charCount.textContent = text.length;
+    const wc = countWords(text);
+    wordCount.textContent = `${wc} word${wc !== 1 ? 's' : ''}`;
+  }
+
+  textarea.addEventListener('input', updateCounts);
+
+  // ─── Save Entry ────────────────────────────────────
+  function saveJournalEntry() {
+    const text = textarea.value.trim();
+    if (!text) {
+      window.showToast?.('Write something first! Even one line counts.', 'error');
+      textarea.focus();
+      return;
+    }
+
+    const state = loadState();
+    const dayData = getDayData(state, currentDay);
+
+    // Set journal text
+    dayData.journal = text;
+
+    // Auto-complete Habit #6 (index 5 — Mental Night Tracker)
+    dayData.habits[5] = true;
+
+    // Recalculate score and save
+    setDayData(state, currentDay, dayData);
+    saveState(state);
+
+    // Show confirmation
+    showSavedIndicator();
+    window.showToast?.('Journal saved! Mental Night Tracker ✓', 'success');
+
+    // Update everything
+    updateHabit6Status(dayData);
+    renderPastEntries();
+    computeAndRenderStats();
+  }
+
+  saveBtn.addEventListener('click', saveJournalEntry);
+
+  // Ctrl+S shortcut
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      saveJournalEntry();
+    }
+  });
+
+  // ─── Saved Indicator Flash ─────────────────────────
+  function showSavedIndicator() {
+    savedIndicator.classList.remove('hidden');
+    savedIndicator.classList.add('flex');
+    clearTimeout(savedIndicator._timer);
+    savedIndicator._timer = setTimeout(() => {
+      savedIndicator.classList.add('hidden');
+      savedIndicator.classList.remove('flex');
+    }, 3000);
+  }
+
+  // ─── Habit 6 Status ────────────────────────────────
+  function updateHabit6Status(dayData) {
+    const done = dayData.habits?.[5] === true;
+    if (done) {
+      habit6Status.classList.add('border-[#f5c518]', 'bg-[#f5c518]');
+      habit6Status.classList.remove('border-[#333]');
+      habit6Status.innerHTML = `<svg class="w-3 h-3 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>`;
+      habit6Label.textContent = 'Completed today ✓';
+      habit6Label.classList.add('text-emerald-400/80');
+      habit6Label.classList.remove('text-[#555]');
+    } else {
+      habit6Status.classList.remove('border-[#f5c518]', 'bg-[#f5c518]');
+      habit6Status.classList.add('border-[#333]');
+      habit6Status.innerHTML = '';
+      habit6Label.textContent = 'Not yet completed today';
+      habit6Label.classList.remove('text-emerald-400/80');
+      habit6Label.classList.add('text-[#555]');
+    }
+  }
+
+  // ─── Writing Prompts ───────────────────────────────
+  function renderPrompts() {
+    // Shuffle and pick 4
+    const shuffled = [...ALL_PROMPTS].sort(() => Math.random() - 0.5);
+    const selected = shuffled.slice(0, 4);
+
+    promptsContainer.innerHTML = selected.map(p => `
+      <button class="prompt-card group flex items-start gap-2.5 p-3 rounded-xl bg-[#0a0a0a] border border-[#1e1e1e] hover:border-[#f5c518]/20 hover:bg-[#f5c518]/[0.03] transition-all duration-300 text-left cursor-pointer" data-prompt="${p.text.replace(/"/g, '&quot;')}">
+        <span class="text-base opacity-60 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5">${p.emoji}</span>
+        <span class="text-xs text-[#666] group-hover:text-[#999] transition-colors leading-relaxed">${p.text}</span>
+      </button>
+    `).join('');
+
+    // Attach click handlers
+    promptsContainer.querySelectorAll('.prompt-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const prompt = card.dataset.prompt;
+        const current = textarea.value;
+        if (current && !current.endsWith('\n') && !current.endsWith(' ')) {
+          textarea.value += '\n\n';
+        }
+        textarea.value += prompt + '\n';
+        textarea.focus();
+        // Place cursor at end
+        textarea.selectionStart = textarea.selectionEnd = textarea.value.length;
+        updateCounts();
+      });
+    });
+  }
+
+  document.getElementById('prompts-refresh')?.addEventListener('click', renderPrompts);
+
+  // ─── Score Badge Class ─────────────────────────────
+  function getScoreBadgeClass(score) {
+    if (score >= 80) return 'score-green';
+    if (score >= 50) return 'score-yellow';
+    if (score > 0) return 'score-red';
+    return 'score-gray';
+  }
+
+  // ─── Past Entries ──────────────────────────────────
+  function renderPastEntries() {
+    const state = loadState();
+    const entries = [];
+
+    for (let d = currentDay; d >= 1; d--) {
+      const dayData = state.days?.[d];
+      if (dayData && dayData.journal && dayData.journal.trim()) {
+        // Skip today's entry from the feed (it's in the editor)
+        if (d === currentDay) continue;
+        entries.push({ day: d, ...dayData });
+      }
+    }
+
+    if (entries.length === 0) {
+      pastFeed.innerHTML = '';
+      emptyState.classList.remove('hidden');
+      entriesCountLabel.textContent = '';
+      return;
+    }
+
+    emptyState.classList.add('hidden');
+    entriesCountLabel.textContent = `${entries.length} entr${entries.length === 1 ? 'y' : 'ies'}`;
+
+    pastFeed.innerHTML = entries.map((entry, i) => {
+      const scoreCls = getScoreBadgeClass(entry.score);
+      const date = formatDate(entry.day);
+      const words = countWords(entry.journal);
+      // Truncate long entries visually
+      const isLong = entry.journal.length > 300;
+      const displayText = isLong ? entry.journal.slice(0, 300) + '…' : entry.journal;
+      const escapedFull = entry.journal.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+      const escapedDisplay = displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+
+      return `
+        <div class="hj-card p-5 group hover:border-[#2a2a2a]" style="animation-delay: ${i * 0.05}s">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2.5">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-[#111] border border-[#1e1e1e] text-[#888] text-[11px] font-bold font-mono-num">
+                Day ${entry.day}
+              </span>
+              <span class="text-[11px] text-[#444]">${date}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] text-[#444] font-mono-num">${words} words</span>
+              <span class="score-badge ${scoreCls} text-[10px]">${entry.score}<span class="opacity-60">/100</span></span>
+            </div>
+          </div>
+          <div class="text-sm text-[#999] leading-relaxed whitespace-pre-wrap entry-text" data-full="${isLong ? '1' : '0'}">
+            <span class="entry-preview">${escapedDisplay}</span>
+            ${isLong ? `<span class="entry-full hidden">${escapedFull}</span>` : ''}
+          </div>
+          ${isLong ? `
+            <button class="expand-btn mt-2 text-[11px] text-[#f5c518]/60 hover:text-[#f5c518] transition-colors">
+              Show more ↓
+            </button>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
+
+    // Expand/collapse handlers
+    pastFeed.querySelectorAll('.expand-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.hj-card');
+        const preview = card.querySelector('.entry-preview');
+        const full = card.querySelector('.entry-full');
+        if (full.classList.contains('hidden')) {
+          preview.classList.add('hidden');
+          full.classList.remove('hidden');
+          btn.textContent = 'Show less ↑';
+        } else {
+          preview.classList.remove('hidden');
+          full.classList.add('hidden');
+          btn.textContent = 'Show more ↓';
+        }
+      });
+    });
+  }
+
+  // ─── Stats Computation ─────────────────────────────
+  function computeAndRenderStats() {
+    const state = loadState();
+    let totalEntries = 0;
+    let longestWords = 0;
+    let totalWords = 0;
+
+    for (let d = 1; d <= TOTAL_DAYS; d++) {
+      const dayData = state.days?.[d];
+      if (dayData && dayData.journal && dayData.journal.trim()) {
+        totalEntries++;
+        const wc = countWords(dayData.journal);
+        totalWords += wc;
+        if (wc > longestWords) longestWords = wc;
+      }
+    }
+
+    const avgWords = totalEntries > 0 ? Math.round(totalWords / totalEntries) : 0;
+
+    // Journal streak (consecutive days with journal entries, counting back from today)
+    let journalStreak = 0;
+    for (let d = currentDay; d >= 1; d--) {
+      const dayData = state.days?.[d];
+      if (dayData && dayData.journal && dayData.journal.trim()) {
+        journalStreak++;
+      } else {
+        break;
+      }
+    }
+
+    // Render stats
+    statTotal.textContent = totalEntries;
+    statStreak.textContent = journalStreak;
+    statLongest.textContent = longestWords;
+    statAvg.textContent = avgWords;
+
+    // Completion ring
+    const pct = Math.round((totalEntries / TOTAL_DAYS) * 100);
+    const circumference = 2 * Math.PI * 52; // r=52
+    const offset = circumference - (pct / 100) * circumference;
+    completionRing.style.strokeDashoffset = offset;
+    completionPct.textContent = `${pct}%`;
+
+    if (totalEntries === 0) {
+      completionLabel.textContent = 'Start journaling to build your streak!';
+    } else if (totalEntries >= 50) {
+      completionLabel.textContent = 'Almost there! Incredible discipline 🏆';
+    } else if (totalEntries >= 30) {
+      completionLabel.textContent = 'Halfway legend! Keep going 🔥';
+    } else if (totalEntries >= 10) {
+      completionLabel.textContent = 'Building momentum! Great consistency 💪';
+    } else {
+      completionLabel.textContent = `${totalEntries} day${totalEntries > 1 ? 's' : ''} of reflection logged`;
+    }
+  }
+
+  // ─── Initialize ────────────────────────────────────
+  loadTodayEntry();
+  renderPrompts();
+  renderPastEntries();
+  computeAndRenderStats();
+
+  // Listen for external state changes
+  window.addEventListener('hj-state-updated', () => {
+    computeAndRenderStats();
+    renderPastEntries();
+    // Reload Habit 6 status
+    const state = loadState();
+    updateHabit6Status(getDayData(state, currentDay));
+  });
+</script>
+
+</Layout>

@@ -1,0 +1,696 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Analytics" activePage="analytics">
+
+  <!-- Page Header -->
+  <div class="mb-8 animate-fade-in">
+    <div class="flex items-center gap-3 mb-2">
+      <div class="w-10 h-10 bg-gradient-to-br from-[#f5c518]/20 to-[#ff6b35]/20 rounded-xl flex items-center justify-center border border-[#f5c518]/10">
+        <svg class="w-5 h-5 text-[#f5c518]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div>
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-white">Performance Analytics</h1>
+        <p class="text-sm text-[#666] mt-0.5">Deep insights into your 120-day journey</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div id="empty-state" class="hidden">
+    <div class="hj-card p-12 md:p-16 text-center">
+      <div class="text-6xl mb-6 animate-float">📊</div>
+      <h2 class="text-xl font-bold text-white mb-3">No Data Yet</h2>
+      <p class="text-[#666] text-sm max-w-md mx-auto mb-6">Start tracking your daily habits to unlock powerful analytics and insights about your performance.</p>
+      <a href="/" class="hj-btn-primary inline-flex">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        Start Tracking Today
+      </a>
+    </div>
+  </div>
+
+  <!-- Analytics Content (hidden until data) -->
+  <div id="analytics-content" class="hidden space-y-6">
+
+    <!-- Stats Cards Row -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 stagger-children">
+      
+      <!-- Total XP -->
+      <div class="hj-card p-4 md:p-5 group">
+        <div class="absolute inset-0 bg-gradient-to-br from-[#f5c518]/[0.03] to-transparent pointer-events-none rounded-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-[10px] font-bold text-[#555] uppercase tracking-widest">Total XP</span>
+            <span class="text-lg">⚡</span>
+          </div>
+          <div class="text-2xl md:text-3xl font-extrabold font-mono-num text-[#f5c518]" id="stat-xp">0</div>
+          <div id="stat-level" class="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#111] border border-[#222]">
+            Lv.1
+          </div>
+        </div>
+      </div>
+
+      <!-- Average Score -->
+      <div class="hj-card p-4 md:p-5 group">
+        <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.03] to-transparent pointer-events-none rounded-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-[10px] font-bold text-[#555] uppercase tracking-widest">Avg Score</span>
+            <span class="text-lg">📈</span>
+          </div>
+          <div class="text-2xl md:text-3xl font-extrabold font-mono-num" id="stat-avg">0</div>
+          <div class="mt-2">
+            <div class="w-full h-1.5 bg-[#1a1a1a] rounded-full overflow-hidden">
+              <div id="stat-avg-bar" class="h-full rounded-full transition-all duration-700 ease-out" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Perfect Days -->
+      <div class="hj-card p-4 md:p-5 group">
+        <div class="absolute inset-0 bg-gradient-to-br from-[#00d4ff]/[0.03] to-transparent pointer-events-none rounded-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-[10px] font-bold text-[#555] uppercase tracking-widest">Perfect Days</span>
+            <span class="text-lg">🏆</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="text-2xl md:text-3xl font-extrabold font-mono-num text-[#00d4ff]" id="stat-perfect">0</span>
+            <span class="text-sm text-[#444] font-mono-num" id="stat-perfect-total">/0</span>
+          </div>
+          <p class="text-[10px] text-[#555] mt-2">Score ≥80 days</p>
+        </div>
+      </div>
+
+      <!-- Best Streak -->
+      <div class="hj-card p-4 md:p-5 group">
+        <div class="absolute inset-0 bg-gradient-to-br from-[#ff6b35]/[0.03] to-transparent pointer-events-none rounded-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-[10px] font-bold text-[#555] uppercase tracking-widest">Best Streak</span>
+            <span class="text-lg">🔥</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="text-2xl md:text-3xl font-extrabold font-mono-num text-[#ff6b35]" id="stat-streak">0</span>
+            <span class="text-sm text-[#444]">days</span>
+          </div>
+          <p class="text-[10px] text-[#555] mt-2">Current: <span id="stat-streak-current" class="text-[#888] font-mono-num">0</span></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily Score Trend Chart -->
+    <div class="hj-card p-4 md:p-6 animate-fade-in" style="animation-delay: 0.2s;">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h2 class="text-base font-bold text-white">Daily Score Trend</h2>
+          <p class="text-xs text-[#555] mt-0.5">Your daily scores over time</p>
+        </div>
+        <div class="flex items-center gap-4 text-[10px] font-semibold">
+          <div class="flex items-center gap-1.5">
+            <div class="w-3 h-[2px] bg-[#f5c518] rounded-full"></div>
+            <span class="text-[#666]">Score</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <div class="w-3 h-[2px] bg-[#f5c518]/30 rounded-full" style="border-top: 1px dashed #f5c518;"></div>
+            <span class="text-[#666]">Target (80)</span>
+          </div>
+        </div>
+      </div>
+      <div class="relative" style="height: 280px;">
+        <canvas id="chart-trend" class="w-full h-full"></canvas>
+        <!-- Tooltip -->
+        <div id="trend-tooltip" class="absolute hidden pointer-events-none z-20 px-3 py-2 rounded-lg bg-[#111] border border-[#2a2a2a] shadow-xl text-xs">
+          <div class="font-bold text-white" id="tooltip-day"></div>
+          <div class="font-mono-num mt-0.5" id="tooltip-score"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Segment Breakdown + Habit Consistency Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+
+      <!-- Segment Breakdown -->
+      <div class="hj-card p-4 md:p-6 animate-fade-in" style="animation-delay: 0.3s;">
+        <div class="mb-5">
+          <h2 class="text-base font-bold text-white">Segment Breakdown</h2>
+          <p class="text-xs text-[#555] mt-0.5">Average completion by principle</p>
+        </div>
+        <div class="space-y-5" id="segment-bars">
+          <!-- Bear -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-base">🐻</span>
+                <span class="text-sm font-semibold" style="color: #ff6b35;">Bear Principle</span>
+              </div>
+              <span class="text-sm font-bold font-mono-num" style="color: #ff6b35;" id="seg-bear-pct">0%</span>
+            </div>
+            <div class="w-full h-3 bg-[#1a1a1a] rounded-full overflow-hidden relative">
+              <div id="seg-bear-bar" class="h-full rounded-full transition-all duration-1000 ease-out relative overflow-hidden" style="width: 0%; background: linear-gradient(90deg, #ff6b35, #ff8f62);">
+                <div class="absolute inset-0 animate-shimmer"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Compounding -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-base">📈</span>
+                <span class="text-sm font-semibold" style="color: #00d4ff;">Compounding</span>
+              </div>
+              <span class="text-sm font-bold font-mono-num" style="color: #00d4ff;" id="seg-comp-pct">0%</span>
+            </div>
+            <div class="w-full h-3 bg-[#1a1a1a] rounded-full overflow-hidden relative">
+              <div id="seg-comp-bar" class="h-full rounded-full transition-all duration-1000 ease-out relative overflow-hidden" style="width: 0%; background: linear-gradient(90deg, #00d4ff, #4de0ff);">
+                <div class="absolute inset-0 animate-shimmer"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Energy -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-base">⚡</span>
+                <span class="text-sm font-semibold" style="color: #39ff14;">Energy Principle</span>
+              </div>
+              <span class="text-sm font-bold font-mono-num" style="color: #39ff14;" id="seg-energy-pct">0%</span>
+            </div>
+            <div class="w-full h-3 bg-[#1a1a1a] rounded-full overflow-hidden relative">
+              <div id="seg-energy-bar" class="h-full rounded-full transition-all duration-1000 ease-out relative overflow-hidden" style="width: 0%; background: linear-gradient(90deg, #39ff14, #6fff4f);">
+                <div class="absolute inset-0 animate-shimmer"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Records Section -->
+      <div class="hj-card p-4 md:p-6 animate-fade-in" style="animation-delay: 0.35s;">
+        <div class="mb-5">
+          <h2 class="text-base font-bold text-white">Personal Records</h2>
+          <p class="text-xs text-[#555] mt-0.5">Your highs, lows, and standouts</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="records-grid">
+          <!-- Best Day -->
+          <div class="p-3 rounded-xl bg-[#0f0f0f] border border-[#1a1a1a] hover:border-emerald-500/20 transition-colors">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center text-sm">🥇</div>
+              <span class="text-[10px] font-bold text-[#555] uppercase tracking-wider">Best Day</span>
+            </div>
+            <div class="font-bold font-mono-num text-emerald-400 text-lg" id="rec-best-score">—</div>
+            <div class="text-[10px] text-[#555] mt-0.5" id="rec-best-day"></div>
+          </div>
+          <!-- Worst Day -->
+          <div class="p-3 rounded-xl bg-[#0f0f0f] border border-[#1a1a1a] hover:border-red-500/20 transition-colors">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-7 h-7 rounded-lg bg-red-500/10 flex items-center justify-center text-sm">📉</div>
+              <span class="text-[10px] font-bold text-[#555] uppercase tracking-wider">Lowest Day</span>
+            </div>
+            <div class="font-bold font-mono-num text-red-400 text-lg" id="rec-worst-score">—</div>
+            <div class="text-[10px] text-[#555] mt-0.5" id="rec-worst-day"></div>
+          </div>
+          <!-- Most Consistent Habit -->
+          <div class="p-3 rounded-xl bg-[#0f0f0f] border border-[#1a1a1a] hover:border-[#f5c518]/20 transition-colors">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-7 h-7 rounded-lg bg-[#f5c518]/10 flex items-center justify-center text-sm">⭐</div>
+              <span class="text-[10px] font-bold text-[#555] uppercase tracking-wider">Most Consistent</span>
+            </div>
+            <div class="font-bold text-[#f5c518] text-sm truncate" id="rec-best-habit">—</div>
+            <div class="text-[10px] text-[#555] mt-0.5 font-mono-num" id="rec-best-habit-pct"></div>
+          </div>
+          <!-- Least Consistent Habit -->
+          <div class="p-3 rounded-xl bg-[#0f0f0f] border border-[#1a1a1a] hover:border-amber-500/20 transition-colors">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-7 h-7 rounded-lg bg-amber-500/10 flex items-center justify-center text-sm">🎯</div>
+              <span class="text-[10px] font-bold text-[#555] uppercase tracking-wider">Needs Work</span>
+            </div>
+            <div class="font-bold text-amber-400 text-sm truncate" id="rec-worst-habit">—</div>
+            <div class="text-[10px] text-[#555] mt-0.5 font-mono-num" id="rec-worst-habit-pct"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Habit Consistency Chart -->
+    <div class="hj-card p-4 md:p-6 animate-fade-in" style="animation-delay: 0.4s;">
+      <div class="mb-5">
+        <h2 class="text-base font-bold text-white">Habit Consistency</h2>
+        <p class="text-xs text-[#555] mt-0.5">Completion rate per habit across all tracked days — sorted best to worst</p>
+      </div>
+      <div class="relative" style="min-height: 420px;">
+        <canvas id="chart-habits" class="w-full h-full"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+</Layout>
+
+<script>
+  import { HABITS, SEGMENTS, TOTAL_DAYS, TARGET_POINTS, getCurrentDay, loadState, getDayData, getTotalXP, getLevel, getSegmentScore, getSegmentMaxScore, getAverageScore, getCompletedDays } from '../data/habits.js';
+
+  // ─── Gather Data ──────────────────────────────────
+  const state = loadState();
+  const currentDay = getCurrentDay();
+  const trackedDays = Object.keys(state.days).map(Number).sort((a, b) => a - b);
+  const hasData = trackedDays.length > 0;
+
+  // Show/hide based on data
+  const emptyEl = document.getElementById('empty-state');
+  const contentEl = document.getElementById('analytics-content');
+  if (!hasData) {
+    emptyEl?.classList.remove('hidden');
+  } else {
+    contentEl?.classList.remove('hidden');
+    populateStats();
+    populateSegments();
+    populateRecords();
+    requestAnimationFrame(() => {
+      drawTrendChart();
+      drawHabitChart();
+    });
+  }
+
+  // ─── Canvas DPR Utility ───────────────────────────
+  function setupCanvas(canvas, w, h) {
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return { ctx, dpr };
+  }
+
+  // ─── Stat Cards ───────────────────────────────────
+  function populateStats() {
+    const xp = getTotalXP(state);
+    const level = getLevel(xp);
+    const avg = getAverageScore(state);
+    const perfect = getCompletedDays(state);
+
+    document.getElementById('stat-xp').textContent = xp.toLocaleString();
+    const levelEl = document.getElementById('stat-level');
+    levelEl.textContent = `Lv.${level.level} ${level.title}`;
+    levelEl.style.color = level.color;
+    levelEl.style.borderColor = level.color + '40';
+
+    const avgEl = document.getElementById('stat-avg');
+    avgEl.textContent = avg;
+    avgEl.style.color = avg >= 80 ? '#4ade80' : avg >= 50 ? '#fbbf24' : '#f87171';
+
+    const avgBar = document.getElementById('stat-avg-bar');
+    avgBar.style.background = avg >= 80
+      ? 'linear-gradient(90deg, #22c55e, #4ade80)'
+      : avg >= 50
+        ? 'linear-gradient(90deg, #f59e0b, #fbbf24)'
+        : 'linear-gradient(90deg, #ef4444, #f87171)';
+    setTimeout(() => { avgBar.style.width = avg + '%'; }, 100);
+
+    document.getElementById('stat-perfect').textContent = perfect;
+    document.getElementById('stat-perfect-total').textContent = `/${trackedDays.length}`;
+
+    document.getElementById('stat-streak').textContent = state.streak?.best || 0;
+    document.getElementById('stat-streak-current').textContent = state.streak?.current || 0;
+  }
+
+  // ─── Segment Breakdown ────────────────────────────
+  function populateSegments() {
+    if (trackedDays.length === 0) return;
+    const segMap = { bear: { sum: 0 }, compounding: { sum: 0 }, energy: { sum: 0 } };
+    for (const d of trackedDays) {
+      const dd = getDayData(state, d);
+      segMap.bear.sum += getSegmentScore(dd.habits, 'bear');
+      segMap.compounding.sum += getSegmentScore(dd.habits, 'compounding');
+      segMap.energy.sum += getSegmentScore(dd.habits, 'energy');
+    }
+    const n = trackedDays.length;
+    const bearMax = getSegmentMaxScore('bear');
+    const compMax = getSegmentMaxScore('compounding');
+    const energyMax = getSegmentMaxScore('energy');
+
+    const bearPct = Math.round((segMap.bear.sum / (bearMax * n)) * 100);
+    const compPct = Math.round((segMap.compounding.sum / (compMax * n)) * 100);
+    const energyPct = Math.round((segMap.energy.sum / (energyMax * n)) * 100);
+
+    document.getElementById('seg-bear-pct').textContent = bearPct + '%';
+    document.getElementById('seg-comp-pct').textContent = compPct + '%';
+    document.getElementById('seg-energy-pct').textContent = energyPct + '%';
+
+    setTimeout(() => {
+      document.getElementById('seg-bear-bar').style.width = bearPct + '%';
+      document.getElementById('seg-comp-bar').style.width = compPct + '%';
+      document.getElementById('seg-energy-bar').style.width = energyPct + '%';
+    }, 200);
+  }
+
+  // ─── Records ──────────────────────────────────────
+  function populateRecords() {
+    // Best and worst day
+    let bestDay = null, worstDay = null;
+    let bestScore = -1, worstScore = 101;
+    for (const d of trackedDays) {
+      const dd = getDayData(state, d);
+      if (dd.score > bestScore) { bestScore = dd.score; bestDay = d; }
+      if (dd.score < worstScore) { worstScore = dd.score; worstDay = d; }
+    }
+    if (bestDay !== null) {
+      document.getElementById('rec-best-score').textContent = bestScore + '/100';
+      document.getElementById('rec-best-day').textContent = `Day ${bestDay}`;
+    }
+    if (worstDay !== null) {
+      document.getElementById('rec-worst-score').textContent = worstScore + '/100';
+      document.getElementById('rec-worst-day').textContent = `Day ${worstDay}`;
+    }
+
+    // Habit consistency
+    const habitCounts = HABITS.map(() => 0);
+    for (const d of trackedDays) {
+      const dd = getDayData(state, d);
+      for (let i = 0; i < 10; i++) {
+        if (dd.habits[i]) habitCounts[i]++;
+      }
+    }
+    const habitPcts = habitCounts.map(c => Math.round((c / trackedDays.length) * 100));
+    let bestHIdx = 0, worstHIdx = 0;
+    habitPcts.forEach((p, i) => {
+      if (p > habitPcts[bestHIdx]) bestHIdx = i;
+      if (p < habitPcts[worstHIdx]) worstHIdx = i;
+    });
+    document.getElementById('rec-best-habit').textContent = HABITS[bestHIdx].emoji + ' ' + HABITS[bestHIdx].name;
+    document.getElementById('rec-best-habit-pct').textContent = habitPcts[bestHIdx] + '% completion';
+    document.getElementById('rec-worst-habit').textContent = HABITS[worstHIdx].emoji + ' ' + HABITS[worstHIdx].name;
+    document.getElementById('rec-worst-habit-pct').textContent = habitPcts[worstHIdx] + '% completion';
+  }
+
+  // ─── Daily Score Trend Chart ──────────────────────
+  function drawTrendChart() {
+    const canvas = document.getElementById('chart-trend');
+    if (!canvas) return;
+    const container = canvas.parentElement;
+    const W = container.clientWidth;
+    const H = container.clientHeight;
+    const { ctx } = setupCanvas(canvas, W, H);
+
+    const pad = { top: 20, right: 20, bottom: 36, left: 42 };
+    const chartW = W - pad.left - pad.right;
+    const chartH = H - pad.top - pad.bottom;
+
+    // Gather score data for each day up to current day
+    const scores = [];
+    for (let d = 1; d <= currentDay; d++) {
+      const dd = getDayData(state, d);
+      scores.push({ day: d, score: state.days[d] ? dd.score : null });
+    }
+
+    // Scales
+    const xScale = (d) => pad.left + ((d - 1) / Math.max(currentDay - 1, 1)) * chartW;
+    const yScale = (s) => pad.top + chartH - (s / 100) * chartH;
+
+    // Grid lines (horizontal)
+    ctx.strokeStyle = '#1a1a1a';
+    ctx.lineWidth = 1;
+    for (let v = 0; v <= 100; v += 20) {
+      const y = yScale(v);
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(W - pad.right, y);
+      ctx.stroke();
+      // Y-axis labels
+      ctx.fillStyle = '#444';
+      ctx.font = '10px "JetBrains Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(v.toString(), pad.left - 8, y);
+    }
+
+    // X-axis labels
+    ctx.fillStyle = '#444';
+    ctx.font = '10px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    const labelStep = currentDay <= 15 ? 1 : currentDay <= 30 ? 5 : 10;
+    for (let d = 1; d <= currentDay; d += labelStep) {
+      ctx.fillText('D' + d, xScale(d), H - pad.bottom + 8);
+    }
+    // Always show last day label if it doesn't coincide
+    if ((currentDay - 1) % labelStep !== 0) {
+      ctx.fillText('D' + currentDay, xScale(currentDay), H - pad.bottom + 8);
+    }
+
+    // Target line (dashed at 80)
+    ctx.strokeStyle = 'rgba(245, 197, 24, 0.25)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    const targetY = yScale(TARGET_POINTS);
+    ctx.moveTo(pad.left, targetY);
+    ctx.lineTo(W - pad.right, targetY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Collect valid data points
+    const dataPoints = scores.filter(s => s.score !== null);
+    if (dataPoints.length === 0) return;
+
+    // Build smooth curve path using cardinal spline
+    function getCardinalPoints(pts, tension = 0.3) {
+      if (pts.length < 2) return pts;
+      const result = [];
+      for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = pts[Math.max(i - 1, 0)];
+        const p1 = pts[i];
+        const p2 = pts[i + 1];
+        const p3 = pts[Math.min(i + 2, pts.length - 1)];
+        const nSeg = 16;
+        for (let t = 0; t <= 1; t += 1 / nSeg) {
+          const t2 = t * t;
+          const t3 = t2 * t;
+          const x = 0.5 * ((2 * p1.x) +
+            (-p0.x + p2.x) * t +
+            (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
+            (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3);
+          const y = 0.5 * ((2 * p1.y) +
+            (-p0.y + p2.y) * t +
+            (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
+            (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3);
+          result.push({ x, y });
+        }
+      }
+      return result;
+    }
+
+    const rawPts = dataPoints.map(s => ({ x: xScale(s.day), y: yScale(s.score) }));
+    const smoothPts = dataPoints.length >= 3 ? getCardinalPoints(rawPts) : rawPts;
+
+    // Gradient fill below line
+    const gradient = ctx.createLinearGradient(0, pad.top, 0, pad.top + chartH);
+    gradient.addColorStop(0, 'rgba(245, 197, 24, 0.25)');
+    gradient.addColorStop(0.5, 'rgba(245, 197, 24, 0.08)');
+    gradient.addColorStop(1, 'rgba(245, 197, 24, 0.0)');
+
+    ctx.beginPath();
+    ctx.moveTo(smoothPts[0].x, pad.top + chartH);
+    ctx.lineTo(smoothPts[0].x, smoothPts[0].y);
+    for (let i = 1; i < smoothPts.length; i++) {
+      ctx.lineTo(smoothPts[i].x, smoothPts[i].y);
+    }
+    ctx.lineTo(smoothPts[smoothPts.length - 1].x, pad.top + chartH);
+    ctx.closePath();
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    // Draw line
+    ctx.beginPath();
+    ctx.moveTo(smoothPts[0].x, smoothPts[0].y);
+    for (let i = 1; i < smoothPts.length; i++) {
+      ctx.lineTo(smoothPts[i].x, smoothPts[i].y);
+    }
+    ctx.strokeStyle = '#f5c518';
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    // Draw data point dots
+    for (const pt of rawPts) {
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#f5c518';
+      ctx.fill();
+      ctx.strokeStyle = '#0a0a0a';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    // ─── Hover / Tooltip ──────────────────────────────
+    const tooltip = document.getElementById('trend-tooltip');
+    const tooltipDay = document.getElementById('tooltip-day');
+    const tooltipScore = document.getElementById('tooltip-score');
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+
+      // Find closest data point
+      let closest = null;
+      let closestDist = Infinity;
+      for (let i = 0; i < dataPoints.length; i++) {
+        const px = rawPts[i].x;
+        const py = rawPts[i].y;
+        const dist = Math.abs(mx - px);
+        if (dist < closestDist && dist < 30) {
+          closestDist = dist;
+          closest = { idx: i, px, py };
+        }
+      }
+
+      if (closest) {
+        const dp = dataPoints[closest.idx];
+        tooltipDay.textContent = `Day ${dp.day}`;
+        const scoreColor = dp.score >= 80 ? '#4ade80' : dp.score >= 50 ? '#fbbf24' : '#f87171';
+        tooltipScore.innerHTML = `<span style="color:${scoreColor}">${dp.score}</span><span style="color:#555">/100</span>`;
+
+        let tx = closest.px + 12;
+        let ty = closest.py - 40;
+        if (tx + 100 > W) tx = closest.px - 110;
+        if (ty < 0) ty = closest.py + 12;
+        tooltip.style.left = tx + 'px';
+        tooltip.style.top = ty + 'px';
+        tooltip.classList.remove('hidden');
+
+        // Redraw with highlight
+        canvas.style.cursor = 'crosshair';
+      } else {
+        tooltip.classList.add('hidden');
+        canvas.style.cursor = 'default';
+      }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      tooltip.classList.add('hidden');
+      canvas.style.cursor = 'default';
+    });
+  }
+
+  // ─── Habit Consistency Horizontal Bar Chart ───────
+  function drawHabitChart() {
+    const canvas = document.getElementById('chart-habits');
+    if (!canvas) return;
+    const container = canvas.parentElement;
+
+    // Calculate habit consistency
+    const habitData = HABITS.map((h, i) => {
+      let count = 0;
+      for (const d of trackedDays) {
+        const dd = getDayData(state, d);
+        if (dd.habits[i]) count++;
+      }
+      const pct = trackedDays.length > 0 ? Math.round((count / trackedDays.length) * 100) : 0;
+      const seg = SEGMENTS.find(s => s.id === h.segment);
+      return { habit: h, index: i, pct, color: seg.color, colorLight: seg.colorLight, emoji: h.emoji };
+    });
+
+    // Sort best to worst
+    habitData.sort((a, b) => b.pct - a.pct);
+
+    const barH = 32;
+    const gap = 10;
+    const totalH = habitData.length * (barH + gap) + 40;
+    const W = container.clientWidth;
+
+    // Resize container
+    container.style.height = totalH + 'px';
+    const { ctx } = setupCanvas(canvas, W, totalH);
+
+    const labelW = 160;
+    const barAreaW = W - labelW - 70;
+    const barStartX = labelW;
+
+    for (let i = 0; i < habitData.length; i++) {
+      const d = habitData[i];
+      const y = i * (barH + gap) + 10;
+
+      // Habit label (emoji + name)
+      ctx.fillStyle = '#aaa';
+      ctx.font = '12px "Inter", sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      const label = d.emoji + ' ' + d.habit.name;
+      // Truncate if needed
+      let displayLabel = label;
+      if (ctx.measureText(displayLabel).width > labelW - 16) {
+        while (ctx.measureText(displayLabel + '…').width > labelW - 16 && displayLabel.length > 0) {
+          displayLabel = displayLabel.slice(0, -1);
+        }
+        displayLabel += '…';
+      }
+      ctx.fillText(displayLabel, barStartX - 12, y + barH / 2);
+
+      // Background bar
+      ctx.fillStyle = '#1a1a1a';
+      roundRect(ctx, barStartX, y + 4, barAreaW, barH - 8, 6);
+      ctx.fill();
+
+      // Filled bar with gradient
+      const fillW = Math.max((d.pct / 100) * barAreaW, 0);
+      if (fillW > 0) {
+        const grad = ctx.createLinearGradient(barStartX, 0, barStartX + fillW, 0);
+        grad.addColorStop(0, d.color);
+        grad.addColorStop(1, d.colorLight);
+        ctx.fillStyle = grad;
+        roundRect(ctx, barStartX, y + 4, fillW, barH - 8, 6);
+        ctx.fill();
+
+        // Inner glow
+        const innerGrad = ctx.createLinearGradient(0, y + 4, 0, y + barH - 4);
+        innerGrad.addColorStop(0, 'rgba(255,255,255,0.15)');
+        innerGrad.addColorStop(0.5, 'rgba(255,255,255,0)');
+        innerGrad.addColorStop(1, 'rgba(0,0,0,0.1)');
+        ctx.fillStyle = innerGrad;
+        roundRect(ctx, barStartX, y + 4, fillW, barH - 8, 6);
+        ctx.fill();
+      }
+
+      // Percentage label
+      ctx.fillStyle = d.pct >= 70 ? '#fff' : '#888';
+      ctx.font = 'bold 12px "JetBrains Mono", monospace';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(d.pct + '%', barStartX + barAreaW + 10, y + barH / 2);
+    }
+  }
+
+  // ─── Rounded Rectangle Helper ─────────────────────
+  function roundRect(ctx, x, y, w, h, r) {
+    if (w <= 0) return;
+    r = Math.min(r, h / 2, w / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+  }
+
+  // ─── Resize Handling ──────────────────────────────
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (hasData) {
+        drawTrendChart();
+        drawHabitChart();
+      }
+    }, 250);
+  });
+</script>

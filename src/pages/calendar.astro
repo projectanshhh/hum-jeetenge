@@ -1,0 +1,594 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Calendar" activePage="calendar">
+
+  <!-- ═══ HEADER SECTION ═══ -->
+  <div class="mb-8 animate-fade-in">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+      <div>
+        <h2 class="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1.5">120-Day Challenge</h2>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
+          Summer 120 Calendar
+        </h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="hj-card px-4 py-2 flex items-center gap-3">
+          <div class="w-2 h-2 rounded-full bg-[#f5c518] animate-pulse-gold"></div>
+          <span class="text-xs font-semibold text-[#888]">Day</span>
+          <span id="current-day-badge" class="font-mono-num text-lg font-extrabold text-[#f5c518]">--</span>
+          <span class="text-xs text-[#555]">/ 120</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="hj-card p-4 md:p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-semibold text-white">Overall Progress</span>
+          <span class="text-xs text-[#555]">— Days with ≥80 points</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span id="progress-count" class="font-mono-num text-sm font-bold text-[#f5c518]">0</span>
+          <span class="text-xs text-[#555]">/</span>
+          <span class="font-mono-num text-sm text-[#555]">120</span>
+        </div>
+      </div>
+      <div class="relative h-3 bg-[#111] rounded-full overflow-hidden border border-[#1e1e1e]">
+        <div id="progress-fill" class="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 ease-out"
+          style="width: 0%; background: linear-gradient(90deg, #f5c518, #ff6b35); box-shadow: 0 0 20px rgba(245,197,24,0.4);">
+        </div>
+        <!-- Shimmer overlay -->
+        <div class="absolute inset-0 animate-shimmer rounded-full pointer-events-none"></div>
+      </div>
+      <div class="flex justify-between mt-2">
+        <span class="text-[10px] text-[#444]">June 1, 2026</span>
+        <span id="progress-pct" class="text-[10px] font-mono-num text-[#f5c518]/60">0%</span>
+        <span class="text-[10px] text-[#444]">Sept 28, 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 120-DAY GRID ═══ -->
+  <div class="mb-8 animate-fade-in" style="animation-delay: 0.15s;">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-bold text-white flex items-center gap-2">
+        <svg class="w-5 h-5 text-[#f5c518]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        Your Journey
+      </h2>
+      <div id="week-indicator" class="text-xs text-[#555] font-medium">Week <span id="week-num" class="font-mono-num text-[#888]">1</span> of 18</div>
+    </div>
+
+    <!-- Grid -->
+    <div id="calendar-grid" class="grid grid-cols-5 md:grid-cols-7 lg:grid-cols-10 gap-2 md:gap-2.5">
+      <!-- 120 cells rendered by JS -->
+    </div>
+  </div>
+
+  <!-- ═══ STATS SUMMARY ═══ -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8 stagger-children" style="animation-delay: 0.3s;">
+    <!-- Perfect Days -->
+    <div class="hj-card p-4 md:p-5 group hover:border-emerald-500/30">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 group-hover:shadow-[0_0_12px_rgba(16,185,129,0.2)] transition-shadow">
+          <span class="text-sm">🏆</span>
+        </div>
+        <span class="text-[10px] font-bold text-emerald-400/70 uppercase tracking-widest">Perfect</span>
+      </div>
+      <div class="font-mono-num text-2xl font-extrabold text-white"><span id="stat-perfect">0</span></div>
+      <div class="text-[10px] text-[#444] mt-1">days ≥80 pts</div>
+    </div>
+
+    <!-- Current Streak -->
+    <div class="hj-card p-4 md:p-5 group hover:border-[#f5c518]/30">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg bg-[#f5c518]/10 flex items-center justify-center border border-[#f5c518]/20 group-hover:shadow-[0_0_12px_rgba(245,197,24,0.2)] transition-shadow">
+          <span class="text-sm">🔥</span>
+        </div>
+        <span class="text-[10px] font-bold text-[#f5c518]/70 uppercase tracking-widest">Streak</span>
+      </div>
+      <div class="font-mono-num text-2xl font-extrabold text-white"><span id="stat-streak">0</span></div>
+      <div class="text-[10px] text-[#444] mt-1">current run</div>
+    </div>
+
+    <!-- Best Streak -->
+    <div class="hj-card p-4 md:p-5 group hover:border-[#ff6b35]/30">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg bg-[#ff6b35]/10 flex items-center justify-center border border-[#ff6b35]/20 group-hover:shadow-[0_0_12px_rgba(255,107,53,0.2)] transition-shadow">
+          <span class="text-sm">⚡</span>
+        </div>
+        <span class="text-[10px] font-bold text-[#ff6b35]/70 uppercase tracking-widest">Best</span>
+      </div>
+      <div class="font-mono-num text-2xl font-extrabold text-white"><span id="stat-best">0</span></div>
+      <div class="text-[10px] text-[#444] mt-1">longest streak</div>
+    </div>
+
+    <!-- Average Score -->
+    <div class="hj-card p-4 md:p-5 group hover:border-[#00d4ff]/30">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-8 h-8 rounded-lg bg-[#00d4ff]/10 flex items-center justify-center border border-[#00d4ff]/20 group-hover:shadow-[0_0_12px_rgba(0,212,255,0.2)] transition-shadow">
+          <span class="text-sm">📊</span>
+        </div>
+        <span class="text-[10px] font-bold text-[#00d4ff]/70 uppercase tracking-widest">Average</span>
+      </div>
+      <div class="font-mono-num text-2xl font-extrabold text-white"><span id="stat-avg">0</span></div>
+      <div class="text-[10px] text-[#444] mt-1">avg score</div>
+    </div>
+  </div>
+
+  <!-- ═══ LEGEND ═══ -->
+  <div class="hj-card p-4 md:p-5 mb-8 animate-fade-in" style="animation-delay: 0.45s;">
+    <h3 class="text-xs font-bold text-[#555] uppercase tracking-widest mb-3">Legend</h3>
+    <div class="flex flex-wrap gap-x-6 gap-y-2">
+      <div class="flex items-center gap-2">
+        <div class="w-5 h-5 rounded-md bg-emerald-500/20 border border-emerald-500/30"></div>
+        <span class="text-xs text-[#888]">≥80 pts — Perfect Day</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-5 h-5 rounded-md bg-amber-500/20 border border-amber-500/30"></div>
+        <span class="text-xs text-[#888]">60-79 pts — Good</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-5 h-5 rounded-md bg-red-500/20 border border-red-500/30"></div>
+        <span class="text-xs text-[#888]">&lt;60 pts — Needs Work</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-5 h-5 rounded-md bg-[#0a0a0a] border border-[#1e1e1e]"></div>
+        <span class="text-xs text-[#888]">Untracked / Missed</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-5 h-5 rounded-md bg-[#111] border border-[#222]"></div>
+        <span class="text-xs text-[#888]">Future Day</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-5 h-5 rounded-md bg-[#111] border-2 border-[#f5c518]" style="box-shadow: 0 0 8px rgba(245,197,24,0.3);"></div>
+        <span class="text-xs text-[#888]">Today</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══ DAY DETAIL MODAL (Slide-in Panel) ═══ -->
+  <div id="day-modal-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden transition-opacity duration-300 opacity-0"></div>
+  <div id="day-modal" class="fixed top-0 right-0 h-full w-full max-w-md bg-[#0a0a0a] border-l border-[#1e1e1e] z-[101] hidden transform translate-x-full transition-transform duration-300 ease-out overflow-y-auto">
+    
+    <!-- Modal Header -->
+    <div class="sticky top-0 z-10 glass border-b border-[#1e1e1e] p-4 md:p-5">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="flex items-center gap-2.5">
+            <div id="modal-day-ring" class="w-10 h-10 rounded-xl flex items-center justify-center font-mono-num text-sm font-extrabold border-2">
+              <span id="modal-day-num">1</span>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-white" id="modal-title">Day 1</h3>
+              <p class="text-xs text-[#555]" id="modal-date">June 1, 2026</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div id="modal-score-badge" class="score-badge score-gray">
+            <span class="font-mono-num" id="modal-score">0</span>/100
+          </div>
+          <button id="modal-close" class="w-8 h-8 rounded-lg bg-[#111] border border-[#222] flex items-center justify-center text-[#666] hover:text-white hover:border-[#444] transition-all">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="p-4 md:p-5">
+      <!-- Segments -->
+      <div id="modal-habits" class="flex flex-col gap-2 mb-6">
+        <!-- Habits rendered by JS -->
+      </div>
+
+      <!-- Score Bar -->
+      <div class="mb-6">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold text-[#555] uppercase tracking-widest">Total Score</span>
+          <span class="font-mono-num text-xl font-extrabold" id="modal-score-big">0</span>
+        </div>
+        <div class="h-2 bg-[#111] rounded-full overflow-hidden border border-[#1e1e1e]">
+          <div id="modal-score-bar" class="h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+        </div>
+        <div class="flex justify-between mt-1.5">
+          <span class="text-[10px] text-[#333]">0</span>
+          <span class="text-[10px] text-[#f5c518]/40">Target: 80</span>
+          <span class="text-[10px] text-[#333]">100</span>
+        </div>
+      </div>
+
+      <!-- Journal Preview (if any) -->
+      <div id="modal-journal-section" class="mb-6 hidden">
+        <h4 class="text-xs font-bold text-[#555] uppercase tracking-widest mb-2">Journal Entry</h4>
+        <div id="modal-journal-text" class="text-sm text-[#888] bg-[#050505] border border-[#1e1e1e] rounded-xl p-3 max-h-32 overflow-y-auto italic"></div>
+      </div>
+
+      <!-- Save Button -->
+      <button id="modal-save" class="hj-btn-primary w-full mb-3">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path d="M5 13l4 4L19 7"/>
+        </svg>
+        Save Changes
+      </button>
+      <p class="text-center text-[10px] text-[#444]">Changes auto-sync to your device</p>
+    </div>
+  </div>
+
+
+  <!-- ═══ CLIENT-SIDE SCRIPT ═══ -->
+  <script>
+    import {
+      HABITS, SEGMENTS, TOTAL_DAYS, TOTAL_POINTS, TARGET_POINTS,
+      getCurrentDay, calculateScore, loadState, saveState,
+      getDayData, setDayData, getCompletedDays, getAverageScore,
+      CHALLENGE_START
+    } from '../data/habits.js';
+
+    // ─── State ──────────────────────────────────────
+    let state = loadState();
+    let currentDay = getCurrentDay();
+    let modalDayNum = null;
+    let modalHabits = [];
+
+    // ─── DOM Elements ───────────────────────────────
+    const grid = document.getElementById('calendar-grid');
+    const modal = document.getElementById('day-modal');
+    const backdrop = document.getElementById('day-modal-backdrop');
+
+    // ─── Helper: Get Date String for a Day Number ───
+    function getDayDate(dayNum) {
+      const start = new Date(CHALLENGE_START);
+      start.setHours(12, 0, 0, 0);
+      const d = new Date(start.getTime() + (dayNum - 1) * 86400000);
+      return d.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function getDayDateShort(dayNum) {
+      const start = new Date(CHALLENGE_START);
+      start.setHours(12, 0, 0, 0);
+      const d = new Date(start.getTime() + (dayNum - 1) * 86400000);
+      return d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+    }
+
+    // ─── Render Calendar Grid ───────────────────────
+    function renderGrid() {
+      grid.innerHTML = '';
+      const completedDays = getCompletedDays(state);
+
+      for (let d = 1; d <= TOTAL_DAYS; d++) {
+        // Phase 2 Divider
+        if (d === 61) {
+          const divider = document.createElement('div');
+          divider.className = 'col-span-full mt-6 mb-2';
+          divider.innerHTML = `
+            <div class="flex flex-col items-center justify-center opacity-80">
+              <h3 class="text-xs font-bold text-[#f5c518] uppercase tracking-widest mb-2">Phase 2: The Evolution (Day 61-120)</h3>
+              <div class="h-px w-full max-w-md bg-gradient-to-r from-transparent via-[#f5c518]/30 to-transparent"></div>
+            </div>
+          `;
+          grid.appendChild(divider);
+        }
+
+        const dayData = getDayData(state, d);
+        const score = dayData.score || 0;
+        const isToday = d === currentDay;
+        const isFuture = d > currentDay;
+        const hasData = state.days[d] !== undefined;
+
+        // Create cell
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell relative group';
+
+        // Color class
+        if (isFuture) {
+          cell.classList.add('cal-future');
+        } else if (!hasData || score === 0) {
+          cell.classList.add('cal-empty');
+        } else if (score >= TARGET_POINTS) {
+          cell.classList.add('cal-green');
+        } else if (score >= 60) {
+          cell.classList.add('cal-yellow');
+        } else {
+          cell.classList.add('cal-red');
+        }
+
+        // Today ring
+        if (isToday) {
+          cell.classList.add('today');
+        }
+
+        // Stagger animation
+        cell.style.opacity = '0';
+        cell.style.animation = `fadeInScale 0.35s ease-out ${d * 20}ms forwards`;
+
+        // Content
+        const dayLabel = document.createElement('span');
+        dayLabel.className = 'text-xs font-bold leading-none';
+        dayLabel.textContent = d;
+
+        const dateLabel = document.createElement('span');
+        dateLabel.className = 'text-[8px] opacity-50 leading-none mt-0.5 hidden md:block';
+        dateLabel.textContent = getDayDateShort(d);
+
+        cell.appendChild(dayLabel);
+        cell.appendChild(dateLabel);
+
+        // Score indicator dot for completed days
+        if (hasData && score > 0 && !isFuture) {
+          const dot = document.createElement('div');
+          dot.className = 'absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full';
+          if (score >= TARGET_POINTS) dot.classList.add('bg-emerald-400');
+          else if (score >= 60) dot.classList.add('bg-amber-400');
+          else dot.classList.add('bg-red-400');
+          cell.appendChild(dot);
+        }
+
+        // Tooltip
+        const tooltip = document.createElement('div');
+        tooltip.className = 'absolute -top-10 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] text-[10px] font-mono-num text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-20 shadow-xl';
+        if (isFuture) {
+          tooltip.textContent = `Day ${d} — Future`;
+        } else if (!hasData || score === 0) {
+          tooltip.textContent = `Day ${d} — Not tracked`;
+        } else {
+          tooltip.innerHTML = `Day ${d} — <span class="${score >= 80 ? 'text-emerald-400' : score >= 60 ? 'text-amber-400' : 'text-red-400'}">${score}/100</span>`;
+        }
+        cell.appendChild(tooltip);
+
+        // Click handler
+        cell.addEventListener('click', () => openModal(d));
+        cell.setAttribute('role', 'button');
+        cell.setAttribute('aria-label', `Day ${d}`);
+
+        grid.appendChild(cell);
+      }
+    }
+
+    // ─── Update Stats ───────────────────────────────
+    function updateStats() {
+      state = loadState();
+      const completedDays = getCompletedDays(state);
+      const avg = getAverageScore(state);
+      const streak = state.streak?.current || 0;
+      const best = state.streak?.best || 0;
+
+      // Header
+      document.getElementById('current-day-badge').textContent = currentDay;
+      document.getElementById('week-num').textContent = Math.ceil(currentDay / 7);
+
+      // Progress bar
+      const pct = Math.round((completedDays / TOTAL_DAYS) * 100);
+      document.getElementById('progress-count').textContent = completedDays;
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('progress-pct').textContent = pct + '%';
+
+      // Stats cards
+      document.getElementById('stat-perfect').textContent = completedDays;
+      document.getElementById('stat-streak').textContent = streak;
+      document.getElementById('stat-best').textContent = best;
+      document.getElementById('stat-avg').textContent = avg;
+    }
+
+    // ─── Modal: Open ────────────────────────────────
+    function openModal(dayNum) {
+      modalDayNum = dayNum;
+      const dayData = getDayData(state, dayNum);
+      modalHabits = [...dayData.habits];
+      const score = calculateScore(modalHabits);
+
+      // Update modal header
+      document.getElementById('modal-day-num').textContent = dayNum;
+      document.getElementById('modal-title').textContent = `Day ${dayNum}`;
+      document.getElementById('modal-date').textContent = getDayDate(dayNum);
+
+      // Day ring color
+      const ring = document.getElementById('modal-day-ring');
+      ring.className = 'w-10 h-10 rounded-xl flex items-center justify-center font-mono-num text-sm font-extrabold border-2';
+      if (score >= TARGET_POINTS) {
+        ring.classList.add('border-emerald-500', 'text-emerald-400', 'bg-emerald-500/10');
+      } else if (score >= 60) {
+        ring.classList.add('border-amber-500', 'text-amber-400', 'bg-amber-500/10');
+      } else if (score > 0) {
+        ring.classList.add('border-red-500', 'text-red-400', 'bg-red-500/10');
+      } else {
+        ring.classList.add('border-[#333]', 'text-[#666]', 'bg-[#111]');
+      }
+
+      updateModalScore(score);
+      renderModalHabits();
+
+      // Journal
+      const journalSection = document.getElementById('modal-journal-section');
+      const journalText = document.getElementById('modal-journal-text');
+      if (dayData.journal && dayData.journal.trim()) {
+        journalSection.classList.remove('hidden');
+        journalText.textContent = dayData.journal;
+      } else {
+        journalSection.classList.add('hidden');
+      }
+
+      // Show modal
+      modal.classList.remove('hidden');
+      backdrop.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        backdrop.classList.remove('opacity-0');
+        backdrop.classList.add('opacity-100');
+        modal.classList.remove('translate-x-full');
+        modal.classList.add('translate-x-0');
+      });
+
+      // Disable body scroll
+      document.body.style.overflow = 'hidden';
+    }
+
+    // ─── Modal: Close ───────────────────────────────
+    function closeModal() {
+      backdrop.classList.remove('opacity-100');
+      backdrop.classList.add('opacity-0');
+      modal.classList.remove('translate-x-0');
+      modal.classList.add('translate-x-full');
+
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        backdrop.classList.add('hidden');
+        document.body.style.overflow = '';
+      }, 300);
+    }
+
+    // ─── Modal: Update Score Display ────────────────
+    function updateModalScore(score) {
+      document.getElementById('modal-score').textContent = score;
+      document.getElementById('modal-score-big').textContent = score;
+
+      // Badge color
+      const badge = document.getElementById('modal-score-badge');
+      badge.className = 'score-badge';
+      if (score >= TARGET_POINTS) badge.classList.add('score-green');
+      else if (score >= 60) badge.classList.add('score-yellow');
+      else if (score > 0) badge.classList.add('score-red');
+      else badge.classList.add('score-gray');
+
+      // Score bar
+      const bar = document.getElementById('modal-score-bar');
+      bar.style.width = score + '%';
+      if (score >= TARGET_POINTS) {
+        bar.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
+        bar.style.boxShadow = '0 0 12px rgba(16,185,129,0.4)';
+      } else if (score >= 60) {
+        bar.style.background = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
+        bar.style.boxShadow = '0 0 12px rgba(245,158,11,0.4)';
+      } else if (score > 0) {
+        bar.style.background = 'linear-gradient(90deg, #ef4444, #f87171)';
+        bar.style.boxShadow = '0 0 12px rgba(239,68,68,0.4)';
+      } else {
+        bar.style.background = '#222';
+        bar.style.boxShadow = 'none';
+      }
+
+      // Score big text color
+      const bigScore = document.getElementById('modal-score-big');
+      if (score >= TARGET_POINTS) bigScore.className = 'font-mono-num text-xl font-extrabold text-emerald-400';
+      else if (score >= 60) bigScore.className = 'font-mono-num text-xl font-extrabold text-amber-400';
+      else if (score > 0) bigScore.className = 'font-mono-num text-xl font-extrabold text-red-400';
+      else bigScore.className = 'font-mono-num text-xl font-extrabold text-[#555]';
+    }
+
+    // ─── Modal: Render Habits ───────────────────────
+    function renderModalHabits() {
+      const container = document.getElementById('modal-habits');
+      container.innerHTML = '';
+
+      // Group by segment
+      let currentSegment = null;
+
+      HABITS.forEach((habit, idx) => {
+        const segment = SEGMENTS.find(s => s.id === habit.segment);
+
+        // Segment header
+        if (habit.segment !== currentSegment) {
+          currentSegment = habit.segment;
+          const segHeader = document.createElement('div');
+          segHeader.className = 'flex items-center gap-2 mt-3 mb-1 first:mt-0';
+          segHeader.innerHTML = `
+            <span class="text-sm">${segment.emoji}</span>
+            <span class="text-[10px] font-bold uppercase tracking-widest" style="color: ${segment.color}80;">${segment.name}</span>
+            <div class="flex-1 h-px" style="background: ${segment.color}15;"></div>
+          `;
+          container.appendChild(segHeader);
+        }
+
+        // Habit row
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer group/habit';
+        row.style.background = modalHabits[idx] ? `${segment.color}08` : '#0a0a0a';
+        row.style.borderColor = modalHabits[idx] ? `${segment.color}25` : '#1e1e1e';
+
+        const isFuture = modalDayNum > currentDay;
+
+        row.innerHTML = `
+          <div class="habit-check ${modalHabits[idx] ? 'checked' : ''} ${isFuture ? 'opacity-30 pointer-events-none' : ''}" data-idx="${idx}">
+            ${modalHabits[idx]
+              ? '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>'
+              : ''}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-semibold text-white flex items-center gap-2">
+              <span class="text-xs">${habit.emoji}</span>
+              <span class="truncate">${habit.name}</span>
+            </div>
+            <div class="text-[10px] text-[#555] truncate">${habit.subtitle}</div>
+          </div>
+          <div class="font-mono-num text-xs font-bold ${modalHabits[idx] ? 'text-[#f5c518]' : 'text-[#333]'}">
+            +${habit.points}
+          </div>
+        `;
+
+        // Toggle handler
+        if (!isFuture) {
+          row.addEventListener('click', () => {
+            modalHabits[idx] = !modalHabits[idx];
+            const newScore = calculateScore(modalHabits);
+            updateModalScore(newScore);
+            renderModalHabits();
+          });
+        }
+
+        container.appendChild(row);
+      });
+    }
+
+    // ─── Modal: Save ────────────────────────────────
+    document.getElementById('modal-save').addEventListener('click', () => {
+      if (modalDayNum === null) return;
+
+      const dayData = getDayData(state, modalDayNum);
+      dayData.habits = [...modalHabits];
+      setDayData(state, modalDayNum, dayData);
+      saveState(state);
+
+      // Refresh everything
+      renderGrid();
+      updateStats();
+      closeModal();
+
+      window.showToast?.(`Day ${modalDayNum} saved! Score: ${dayData.score}/100`, 'success');
+
+      if (dayData.score >= TARGET_POINTS) {
+        window.launchConfetti?.();
+      }
+    });
+
+    // ─── Modal: Close handlers ──────────────────────
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        closeModal();
+      }
+    });
+
+    // ─── Listen for external state updates ──────────
+    window.addEventListener('hj-state-updated', () => {
+      state = loadState();
+      renderGrid();
+      updateStats();
+    });
+
+    // ─── Initial Render ─────────────────────────────
+    renderGrid();
+    updateStats();
+  </script>
+
+</Layout>
