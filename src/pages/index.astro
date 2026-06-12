@@ -363,15 +363,15 @@ import { HABITS, SEGMENTS, TOTAL_DAYS, TOTAL_POINTS, TARGET_POINTS } from '../da
         for (const habit of segHabits) {
           const checked = dayData.habits[habit.id];
           html += `
-            <div class="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${checked ? 'bg-[#111]' : 'bg-transparent hover:bg-[#0d0d0d]'} group cursor-pointer" data-habit-id="${habit.id}" role="button" tabindex="0">
-              <div class="habit-check ${checked ? 'checked' : ''}" data-hid="${habit.id}">
+            <div class="flex items-center gap-4 p-4 rounded-xl transition-all duration-200 ${checked ? 'bg-[#111] border border-[#222]' : 'bg-[#0d0d0d] hover:bg-[#111] border border-transparent hover:border-[#1e1e1e]'} group cursor-pointer" data-habit-id="${habit.id}" role="button" tabindex="0">
+              <div class="habit-check flex-shrink-0 ${checked ? 'checked' : ''}" data-hid="${habit.id}">
                 ${checked ? '<svg class="w-4 h-4 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>' : ''}
               </div>
               <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="text-sm font-semibold ${checked ? 'text-[#888] line-through' : 'text-white'} transition-colors">${habit.emoji} ${habit.name}</span>
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-base font-bold ${checked ? 'text-[#666] line-through' : 'text-white'} transition-colors">${habit.emoji} ${habit.name}</span>
                 </div>
-                <span class="text-[11px] text-[#444] ${checked ? 'line-through' : ''}">${habit.subtitle} — ${habit.descHi}</span>
+                <span class="text-sm text-[#444] ${checked ? 'line-through' : ''}">${habit.subtitle} — ${habit.descHi}</span>
               </div>
               <div class="flex items-center gap-2">
                 <span class="text-sm font-bold font-mono-num ${checked ? 'text-emerald-400' : 'text-[#333]'} transition-colors">+${habit.points}</span>
