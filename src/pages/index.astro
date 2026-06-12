@@ -120,6 +120,7 @@ import { HABITS, SEGMENTS, TOTAL_DAYS, TOTAL_POINTS, TARGET_POINTS } from '../da
         <span id="habits-done-count" class="text-sm font-mono-num text-[#555]">(0/10)</span>
       </h2>
       <div id="day-nav" class="flex items-center gap-2">
+        <button id="today-btn" class="hidden hj-btn-ghost px-2 py-1 text-[10px] text-[#f5c518] uppercase tracking-wider">Today</button>
         <button id="prev-day" class="hj-btn-ghost px-2 py-1 text-xs">← Prev</button>
         <span id="viewing-day" class="text-xs font-bold text-[#f5c518] font-mono-num">Day 1</span>
         <button id="next-day" class="hj-btn-ghost px-2 py-1 text-xs">Next →</button>
@@ -259,8 +260,18 @@ import { HABITS, SEGMENTS, TOTAL_DAYS, TOTAL_POINTS, TARGET_POINTS } from '../da
       document.getElementById('stat-avg').textContent = getAverageScore(state);
       document.getElementById('stat-total-xp').textContent = getTotalXP(state);
 
-      // Viewing day label
-      document.getElementById('viewing-day').textContent = `Day ${viewingDay}`;
+      // Update header
+      const viewingDayEl = document.getElementById('viewing-day');
+      const todayBtn = document.getElementById('today-btn');
+      if (viewingDayEl) viewingDayEl.textContent = `Day ${viewingDay}`;
+      
+      if (todayBtn) {
+        if (viewingDay !== today) {
+          todayBtn.classList.remove('hidden');
+        } else {
+          todayBtn.classList.add('hidden');
+        }
+      }
 
       // Habits done count
       const doneCount = dayData.habits.filter(Boolean).length;
@@ -492,6 +503,9 @@ import { HABITS, SEGMENTS, TOTAL_DAYS, TOTAL_POINTS, TARGET_POINTS } from '../da
     });
     document.getElementById('next-day')?.addEventListener('click', () => {
       if (viewingDay < today) { viewingDay++; render(); }
+    });
+    document.getElementById('today-btn')?.addEventListener('click', () => {
+      if (viewingDay !== today) { viewingDay = today; render(); }
     });
 
     // ─── SHARE TO TELEGRAM ────────────────────────────
