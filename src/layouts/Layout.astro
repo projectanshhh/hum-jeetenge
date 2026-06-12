@@ -15,7 +15,7 @@ const { title, activePage } = Astro.props;
   <meta charset="UTF-8" />
   <meta name="description" content="Hum Jeetenge — Summer 120 Challenge Habit Tracker. Track 10 daily habits, score 100 points, build unstoppable discipline." />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -32,7 +32,7 @@ const { title, activePage } = Astro.props;
     <aside id="sidebar" class="sidebar hidden lg:flex flex-col p-4 z-40 relative bg-[#050505]">
       
       <!-- Brand -->
-      <a href={import.meta.env.BASE_URL} class="flex items-center gap-3 mb-8 px-3 mt-2 group">
+      <a href="/" class="flex items-center gap-3 mb-8 px-3 mt-2 group">
         <div class="w-10 h-10 bg-gradient-to-br from-[#f5c518] to-[#ff6b35] rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(245,197,24,0.3)] group-hover:shadow-[0_0_30px_rgba(245,197,24,0.5)] transition-all duration-300">
           <span class="text-lg">🏆</span>
         </div>
@@ -46,19 +46,19 @@ const { title, activePage } = Astro.props;
       <nav class="flex flex-col gap-0.5 flex-1">
         <div class="text-[10px] font-bold text-[#333] uppercase tracking-widest px-4 mb-2 mt-4">Tracker</div>
         
-        <a href={import.meta.env.BASE_URL} id="nav-dashboard" class={`nav-item ${activePage === 'dashboard' ? 'active' : ''}`}>
+        <a href="/" id="nav-dashboard" class={`nav-item ${activePage === 'dashboard' ? 'active' : ''}`}>
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
           Dashboard
         </a>
-        <a href={`${import.meta.env.BASE_URL}calendar`} id="nav-calendar" class={`nav-item ${activePage === 'calendar' ? 'active' : ''}`}>
+        <a href="/calendar" id="nav-calendar" class={`nav-item ${activePage === 'calendar' ? 'active' : ''}`}>
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           Calendar
         </a>
-        <a href={`${import.meta.env.BASE_URL}analytics`} id="nav-analytics" class={`nav-item ${activePage === 'analytics' ? 'active' : ''}`}>
+        <a href="/analytics" id="nav-analytics" class={`nav-item ${activePage === 'analytics' ? 'active' : ''}`}>
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           Analytics
         </a>
-        <a href={`${import.meta.env.BASE_URL}journal`} id="nav-journal" class={`nav-item ${activePage === 'journal' ? 'active' : ''}`}>
+        <a href="/journal" id="nav-journal" class={`nav-item ${activePage === 'journal' ? 'active' : ''}`}>
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
           Journal
         </a>
@@ -110,19 +110,19 @@ const { title, activePage } = Astro.props;
 
     <!-- Mobile Bottom Nav -->
     <nav class="lg:hidden fixed bottom-0 left-0 right-0 h-16 glass border-t border-[#1e1e1e] z-50 flex items-center justify-around px-2">
-      <a href={import.meta.env.BASE_URL} class={`flex flex-col items-center gap-0.5 text-[10px] font-semibold px-3 py-1 rounded-lg transition-colors ${activePage === 'dashboard' ? 'text-[#f5c518]' : 'text-[#666]'}`}>
+      <a href="/" class={`flex flex-col items-center gap-0.5 text-[10px] font-semibold px-3 py-1 rounded-lg transition-colors ${activePage === 'dashboard' ? 'text-[#f5c518]' : 'text-[#666]'}`}>
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
         Home
       </a>
-      <a href={`${import.meta.env.BASE_URL}calendar`} class={`flex flex-col items-center gap-0.5 text-[10px] font-semibold px-3 py-1 rounded-lg transition-colors ${activePage === 'calendar' ? 'text-[#f5c518]' : 'text-[#666]'}`}>
+      <a href="/calendar" class={`flex flex-col items-center gap-0.5 text-[10px] font-semibold px-3 py-1 rounded-lg transition-colors ${activePage === 'calendar' ? 'text-[#f5c518]' : 'text-[#666]'}`}>
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Calendar
       </a>
-      <a href={`${import.meta.env.BASE_URL}analytics`} class={`flex flex-col items-center gap-0.5 text-[10px] font-semibold px-3 py-1 rounded-lg transition-colors ${activePage === 'analytics' ? 'text-[#f5c518]' : 'text-[#666]'}`}>
+      <a href="/analytics" class={`flex flex-col items-center gap-0.5 text-[10px] font-semibold px-3 py-1 rounded-lg transition-colors ${activePage === 'analytics' ? 'text-[#f5c518]' : 'text-[#666]'}`}>
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Stats
       </a>
-      <a href={`${import.meta.env.BASE_URL}journal`} class={`flex flex-col items-center gap-0.5 text-[10px] font-semibold px-3 py-1 rounded-lg transition-colors ${activePage === 'journal' ? 'text-[#f5c518]' : 'text-[#666]'}`}>
+      <a href="/journal" class={`flex flex-col items-center gap-0.5 text-[10px] font-semibold px-3 py-1 rounded-lg transition-colors ${activePage === 'journal' ? 'text-[#f5c518]' : 'text-[#666]'}`}>
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         Journal
       </a>

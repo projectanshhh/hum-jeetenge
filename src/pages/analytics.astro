@@ -21,7 +21,7 @@ import Layout from '../layouts/Layout.astro';
     <div class="hj-card p-8 md:p-12 text-center relative overflow-hidden">
       <!-- Anime character in background -->
       <div class="absolute bottom-0 right-0 w-48 md:w-72 opacity-10 md:opacity-20 pointer-events-none mix-blend-screen">
-        <img src={import.meta.env.BASE_URL + "images/anime_warrior.png"} alt="Warrior" class="w-full h-auto" style="-webkit-mask-image: linear-gradient(to top, transparent 5%, black 60%); mask-image: linear-gradient(to top, transparent 5%, black 60%);" />
+        <img src="/images/anime_warrior.png" alt="Warrior" class="w-full h-auto" style="-webkit-mask-image: linear-gradient(to top, transparent 5%, black 60%); mask-image: linear-gradient(to top, transparent 5%, black 60%);" />
       </div>
       <div class="relative z-10">
         <div class="text-6xl mb-6 animate-float">⚔️</div>
@@ -46,7 +46,7 @@ import Layout from '../layouts/Layout.astro';
             <div class="text-[10px] text-[#555] font-semibold mt-0.5">XP to Legend</div>
           </div>
         </div>
-        <a href={import.meta.env.BASE_URL} class="hj-btn-primary inline-flex">
+        <a href="/" class="hj-btn-primary inline-flex">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
           Begin Your First Mission
         </a>
@@ -62,7 +62,7 @@ import Layout from '../layouts/Layout.astro';
       <div class="absolute inset-0 animate-shimmer pointer-events-none"></div>
       <!-- Anime warrior faint BG -->
       <div class="absolute bottom-0 right-0 w-40 md:w-60 opacity-10 pointer-events-none mix-blend-screen">
-        <img src={import.meta.env.BASE_URL + "images/anime_warrior.png"} alt="" class="w-full h-auto" style="-webkit-mask-image: linear-gradient(to top, transparent 5%, black 70%); mask-image: linear-gradient(to top, transparent 5%, black 70%);" />
+        <img src="/images/anime_warrior.png" alt="" class="w-full h-auto" style="-webkit-mask-image: linear-gradient(to top, transparent 5%, black 70%); mask-image: linear-gradient(to top, transparent 5%, black 70%);" />
       </div>
       <div class="relative z-10">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
