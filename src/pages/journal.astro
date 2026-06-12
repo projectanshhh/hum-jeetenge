@@ -403,6 +403,17 @@ import Layout from '../layouts/Layout.astro';
     return 'score-gray';
   }
 
+  // ─── XSS Mitigation ────────────────────────────────
+  function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+  }
+
   // ─── Past Entries ──────────────────────────────────
   function renderPastEntries() {
     const state = loadState();
@@ -434,8 +445,9 @@ import Layout from '../layouts/Layout.astro';
       // Truncate long entries visually
       const isLong = entry.journal.length > 300;
       const displayText = isLong ? entry.journal.slice(0, 300) + '…' : entry.journal;
-      const escapedFull = entry.journal.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
-      const escapedDisplay = displayText.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+      
+      const escapedFull = escapeHtml(entry.journal).replace(/\n/g, '<br>');
+      const escapedDisplay = escapeHtml(displayText).replace(/\n/g, '<br>');
 
       return `
         <div class="hj-card p-5 group hover:border-[#2a2a2a]" style="animation-delay: ${i * 0.05}s">
