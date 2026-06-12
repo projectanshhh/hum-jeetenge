@@ -198,10 +198,11 @@ const { title, activePage } = Astro.props;
             if (cloudState) {
               const cloudData = JSON.parse(cloudState);
               const localData = loadState();
-              // Merge: use whichever has more data (more days filled)
-              const cloudDays = Object.keys(cloudData.days || {}).length;
-              const localDays = Object.keys(localData.days || {}).length;
-              if (cloudDays > localDays) {
+              // Merge: use whichever was updated more recently
+              const cloudTime = new Date(cloudData.lastSaved || 0).getTime();
+              const localTime = new Date(localData.lastSaved || 0).getTime();
+              
+              if (cloudTime > localTime) {
                 saveState(cloudData);
                 window.showToast?.(`Welcome back, ${user.displayName}! Cloud data synced.`);
               } else {
