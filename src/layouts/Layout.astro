@@ -369,8 +369,9 @@ const { title, activePage } = Astro.props;
       resize();
       window.addEventListener('resize', resize);
 
-      // Create floating dots
-      for (let i = 0; i < 40; i++) {
+      // Less particles on mobile to ensure 120fps buttery smoothness
+      const particleCount = window.innerWidth < 768 ? 15 : 40;
+      for (let i = 0; i < particleCount; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
