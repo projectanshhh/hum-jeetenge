@@ -282,8 +282,14 @@ export function recalcStreak(state) {
   const today = getCurrentDay();
   let current = 0;
   let best = state.streak?.best || 0;
-  // Count backwards from today
-  for (let d = today; d >= 1; d--) {
+  
+  // If today hasn't reached the target yet, the streak is maintained from yesterday
+  const todayData = state.days[today];
+  const todayReached = todayData && todayData.score >= TARGET_POINTS;
+  const startDay = todayReached ? today : today - 1;
+
+  // Count backwards
+  for (let d = startDay; d >= 1; d--) {
     const day = state.days[d];
     if (day && day.score >= TARGET_POINTS) {
       current++;
@@ -291,6 +297,7 @@ export function recalcStreak(state) {
       break;
     }
   }
+
   best = Math.max(best, current);
   state.streak = { current, best };
 }
